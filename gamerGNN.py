@@ -105,6 +105,9 @@ while True:
     url='https://gnn.gamer.com.tw/index.php?k=4'
 
     # url='https://gnn.gamer.com.tw/?yy=20'+year+'&mm='+month
+    if test:
+        # url = 'https://gnn.gamer.com.tw/index.php?yy=2023&mm=2&k=4'
+        url='https://gnn.gamer.com.tw/index.php?k=4'
 
     headers = {'User-Agent': random.choice(user_agent_list)}
     response = requests.get(url=url, headers=headers)
@@ -117,7 +120,7 @@ while True:
             if not 'https:' in dir:
                 myLink = 'https:'+dir.get('href')
                 if LinkSet:
-                    myLink='https://gnn.gamer.com.tw/detail.php?sn=243386'
+                    myLink='https://gnn.gamer.com.tw/detail.php?sn=246391/'
                 response = requests.get(url=myLink, headers=headers)
                 soup = BeautifulSoup(response.text, 'lxml')
                 pArticle = soup.find("div", {"class": "BH-lbox GN-lbox3 gnn-detail-cont"})
@@ -125,17 +128,17 @@ while True:
     print(' '+animation[round(ix*1) % len(animation)]+'Waiting...', end="\r")
     ix+=1
     try:
+        # break
         if target in h1:
             ts=time.time()
             newResponse = requests.get(url=myLink, headers=headers)
             newSoup = BeautifulSoup(newResponse.text, 'lxml')
             idDiv=newSoup.find("div", {"id": "BH-master"})
-            id=idDiv.find('script').text.strip()
-            id=id.replace('ga(\'send\', \'event\', \'GNN\', \'單篇新聞\', \'','')
-            id=id.replace('\');','')
+            id = str(int(re.search(r'\d+', myLink).group()))
             author=newSoup.find("span", {"class": "GN-lbox3C"}).text.strip()
             author=author[author.index('）')+2:]
-
+            month = int(author[author.index('-')+1:author.index('-')+3])
+            day = (author[author.index('-')+4:author.index('-')+6])
             latest = cd+'\\DL.txt'
             if not Path(latest).is_file():
                 fi = open(latest, 'w')
@@ -455,7 +458,6 @@ while True:
                         # with Listener(on_press = show) as listener:   
                         #     listener.join()
 
-
                         if not test:
                             # #標題
                             
@@ -492,6 +494,8 @@ while True:
                         fi.write(id+'\n'+rec)
                         fi.close()
                     break
-
+        delay_choices = [0.5, 0.2, 0.4]  # 延遲的秒數
+        delay = random.choice(delay_choices)  # 隨機選取秒數
+        time.sleep(delay)
     except NameError:
         pass
