@@ -121,7 +121,7 @@ while True:
             if not 'https:' in dir:
                 myLink = 'https:'+dir.get('href')
                 if LinkSet:
-                    myLink='https://gnn.gamer.com.tw/detail.php?sn=246391/'
+                    myLink='https://gnn.gamer.com.tw/detail.php?sn=245766'
                 response = requests.get(url=myLink, headers=headers)
                 soup = BeautifulSoup(response.text, 'lxml')
                 pArticle = soup.find("div", {"class": "BH-lbox GN-lbox3 gnn-detail-cont"})
@@ -169,6 +169,7 @@ while True:
                 imgList = []
                 bgcolor1='#eff7f6'
                 bgcolor2='#f6fff8'
+                space = '[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]'
                 ca=1
                 for i in allParts:
                     allitems.append(str(i).replace(u'\u3000', u' ').replace(u'\xa0', u' ').replace(u'\n', u''))
@@ -178,21 +179,16 @@ while True:
                     pArticle = pArticle.find('div')
 
                 for item in allParts:
-                    
                     words = item.text.strip()
                     if '　　' in str(item):
-                        index = allParts.index(item)
                         words = '\u3000\u3000' + words
-                        if index > 2:
-                            if '　　' in str(allParts[index - 2]):
-                                words =  '\n' + words
                     if 'h2' in str(item):
                         h2List.append(words)
-                        allwords.append('[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]\n[div align=left][size=5][b][color=#145292]' + words + '[/color][/b][/size][/div][hr]')
+                        allwords.append(space + '\n[div align=left][size=5][b][color=#145292]' + words + '[/color][/b][/size][/div][hr]')
                         words = ''
                     if 'h3' in str(item):
                         h3List.append(words)
-                        allwords.append('[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]\n[div align=left][size=4][b][color=#145292]' + words + '[/color][/b][/size][/div]')
+                        allwords.append(space + '\n[div align=left][size=4][b][color=#145292]' + words + '[/color][/b][/size][/div]' + space)
                         words = ''
                     if 'img' in str(item):
                         try:
@@ -210,7 +206,7 @@ while True:
                             pass
                     if 'pic-desc' in str(item):
                         if not '<li' in str(item):
-                            allwords.append('[div align=center][size=2][color=#343a40]'+words+'[/color][/size][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]')
+                            allwords.append('[div align=center][size=2][color=#343a40]'+words+'[/color][/size][/div]' + space)
                             words = ''
                         if '<li' in str(item):
                             words = ''
@@ -221,7 +217,7 @@ while True:
                     if 'table' in str(item):
                         tbody = item.find('tbody')
                         rows = tbody.find_all('tr')
-                        at = '[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=1]'
+                        at = '[div][table width=100% cellspacing=1 cellpadding=1 border=1]'
                         for row in rows:
                             c = 1
                             at = at + '[tr]'
@@ -253,28 +249,31 @@ while True:
                                 at = at.replace('\n\n', '\n').replace('\n\n\n', '\n').replace('\n\n\n\n', '\n')
                                 c+=1
                             at = at+'[/tr]'
-                        at = at+'[/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]'
+                        at = at+'[/table][/div][div]'
                         ca+=1
-                        allwords.append(at)
+                        allwords.append(space + at + space)
                     
 
 
-                    if not words == '' and str(item).find('gamecard') == -1 and str(item).find('span') == -1 :
-                        if str(item).find('acglink')!=-1 and str(item).find('<div')==-1:
+                    if not words == '' and str(item).find('gamecard') == -1:
+                        if str(item).find('acglink')!=-1 and str(item).find('<div')==-1 :
                             words = ''
-                        allwords.append('[div align=left]' + words + '[/div]')
+                        if (str(item).find('span') != -1 or str(item).find('<p') != -1):
+                            words = ''
+                        if not words == '':
+                            allwords.append(space + '[div align=left]' + words + '[/div]' + space)
                     alldivs.append(str(item))
 
 
                 # break
                 
-                res = [ele for ele in allwords if ele != '']
+                res = [ele for ele in allwords if ele != '[div align=left][/div]']
                 text = '[div align=left][size=1][color=#343a40]發布時間: ' + author + '[/color][/size][/div][hr]'
                 for i in range(len(res)):
                     text = text + res[i]
                 text = text + '[div][/div]\n[div align=left]' + '[hr][url='
                 text = text + myLink
-                text = text + '/]來源[/url] [/div]\n[div align=left]標題整理:\n'
+                text = text + ']來源[/url][/div]\n[div align=left]標題整理:\n'
                 for h2 in h2List:
                     text = text + '[li][color=#145292]' + h2 + '[/color][/li]'
                 text = text + '[/div][div align=left]' + review + '[/div]'
