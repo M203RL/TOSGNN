@@ -10,7 +10,8 @@ import time
 import pyperclip
 import random
 import webbrowser
-import pyautogui
+import numpy as np
+from autoPost import post, initial
 import re
 ##Time Set
 (hs,ms,ss)=(17,0,0)
@@ -81,7 +82,9 @@ review=''
 if reviewInput:
     review=review+input("心得: ")
 print("心得: "+review)
+initial(test)
 
+space = '[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]'
 while True:
     hour=int(time.strftime('%H',t))
     min=int(time.strftime('%M',t))
@@ -152,348 +155,310 @@ while True:
                 pass
             else:
                 
-                    nod=[]
-                    print("New GNN Found")
-                    pTitle = newSoup.find("div", {"class": "BH-lbox GN-lbox3 gnn-detail-cont"})
-                    title = pTitle.find('h1').text.strip()
-                    pArticle=newSoup.find("div", {"class": "GN-lbox3B"})
-                    figAll=newSoup.find("div", {"class": "GN-lbox3B"})
-                    ptable=pArticle
-                    allParts=pArticle.find_all()
-                    alldivs=[]
-                    allwords=[]
-                    for i in allParts:
-                        alldivs.append(str(i).replace(u'\u3000', u' ').replace(u'\xa0', u' ').replace(u'\n', u''))
-                    # txt(alldivs)
-                    
-                    while all(x in alldivs[0] for x in alldivs[1:10] ):
-                        del alldivs[0]
-                        del allParts[0]
-                        pArticle=pArticle.find('div')
-                    for i in allParts:
-                        if str(i).find('td')==-1 and str(i).find('gamecard')==-1:
-                            tx=i.text.strip()
-                            allwords.append(tx)
-                        else:
-                            allwords.append('')
-                    # txt(allwords)
+                nod=[]
+                print("New GNN Found")
+                pTitle = newSoup.find("div", {"class": "BH-lbox GN-lbox3 gnn-detail-cont"})
+                title = pTitle.find('h1').text.strip()
+                pArticle=newSoup.find("div", {"class": "GN-lbox3B"})
+                figAll=newSoup.find("div", {"class": "GN-lbox3B"})
+                ptable=pArticle
+                allParts=pArticle.find_all()
+                alldivs=[]
+                allwords=[]
+                for i in allParts:
+                    alldivs.append(str(i).replace(u'\u3000', u' ').replace(u'\xa0', u' ').replace(u'\n', u''))
+                # txt(alldivs)
+                
+                while all(x in alldivs[0] for x in alldivs[1:10] ):
+                    del alldivs[0]
+                    del allParts[0]
+                    pArticle=pArticle.find('div')
+                for i in allParts:
+                    if str(i).find('td')==-1 and str(i).find('gamecard')==-1:
+                        tx=i.text.strip()
+                        allwords.append(tx)
+                    else:
+                        allwords.append('')
+                # txt(allwords)
 
-                    ytList=[]
-                    ytVideos=pArticle.find_all('iframe')
-                    for v in ytVideos:
-                        ytLink=v['data-src']
-                        ix=allParts.index(v)
-                        alldivs[ix]='[div][movie='+ytLink+' width=640 height=360][/div]'
-                        ytList.append(ytLink)
-
-
-                    
-                    article=[]
-                    wordArt=[]
-                    wordList=[]
-                    divWords=pArticle.find_all('div')
-                    for item in divWords:
-                        if not item.find('table') and not item.find('figure') and not item.find('h2') and not item.find('h3'):
-                            # if not item.find('figure'):
-                                tstring=str(item)
-                                word=item.text.strip()
-                                st=item.text.strip()
-                                if '　　' in tstring:
-                                    word='\u3000\u3000'+word
-                                if tstring.find('<span style="font-size:16px;">')==-1:
-                                    if word!='':
-                                        if tstring.find('<span class="slider-count-span">')==-1 and not word in nod:
-                                            if tstring.find('<span style="font-size:')!=-1:
-                                                if tstring.find('13px;')!=-1 or tstring.find('12px;')!=-1:
-                                                    article.append('[div align=left][size=2][color=#343a40]'+word+'[/color][/size][/div]')
-                                            else:
-                                                article.append('[div align=left]'+word+'[/div]\n')
-                                            wordList.append(st)
-                                            wordArt.append(st)
-                                            nod.append(word)
-                    # txt(divWords)
-                    for word in wordArt:
-                        i=allwords.index(word)
-                        alldivs[i]='words'
-                    
-                    h2s=pArticle.find_all('h2')
-                    h2List=[]
-                    for ele in h2s:
-                        h2=ele.text.strip()
-                        # .replace(u'\u3000', u' ').replace(u'\xa0', u' ')
-                        # if not h2 in wordList:
-                        i2=allParts.index(ele)
-                        allParts[i2]='hash'
-                        alldivs[i2]='h2'
-                        h2List.append(h2)
-                            # wordList.append(h2)
-                    
-                    h3s=pArticle.find_all('h3')
-                    h3List=[]
-                    for ele in h3s:
-                        h3=ele.text.strip()
-                        # .replace(u'\u3000', u' ').replace(u'\xa0', u' ')
-                        # if not h3 in wordList:
-                        i3=allParts.index(ele)
-                        allParts[i3]='hash'
-                        alldivs[i3]='h3'
-                        h3List.append(h3)
-                        # wordList.append(h3)
-                    # txt(alldivs)
-                    
-                    
-
-                    lis=figAll.find_all('img',{'name':'gnnPIC'})
-                    liList=[]
-                    for ele in lis:
-                        try:
-                            # fig = ele.find('img')
-                            pPhoto = ele['data-src']
-                            s = quote(pPhoto, safe=string.printable)
-                            tn='[div align=center width=100%][img='+s+'][/div]'
-
-                        except TypeError:
-                            pPhoto=''
-                            tn=''
-                            pass
-                        liList.append(tn)
-
-                    figd=figAll.find_all('figure',{'class':'pic-desc'})
-                    figdList=[]
-                    for ele in figd:
-                        text=ele.text.strip()
-                        i=len(allwords)-allwords[::-1].index(text)
-                        alldivs[i-1]='[div align=center][size=2][color=#343a40]'+text+'[/color][/size][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]\n'
-                        figdList.append(text)
-                    # txt(alldivs)
-                    # txt(figdList)
-                    
+                ytList=[]
+                ytVideos=pArticle.find_all('iframe')
+                for v in ytVideos:
+                    ytLink=v['data-src']
+                    ix=allParts.index(v)
+                    alldivs[ix]='[div][movie='+ytLink+' width=640 height=360][/div]'
+                    ytList.append(ytLink)
 
 
-
-                    tables=ptable.find_all('tbody')
-                    
-                    taList=[]
-                    bgcolor1='#eff7f6'
-                    bgcolor2='#f6fff8'
-                    ca=1
-                    # txt(tables)
-                    for a in range(len(tables)):
-                        at = '[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=1]'
-                        rows = tables[a].find_all('tr')
-                        for row in rows:
-                            c=1
-                            at=at+'[tr]'
-                            cols = row.find_all('td')
-                            for col in cols:
-                                    if 'colspan=' in str(col):
-                                        x=str(col).index('colspan=')
-                                        tar=str(col)[x+8:x+12]
-                                        cspan=re.findall(r'\d+', str(col)[x+8:x+12])[0]
-                                        if 'text-align: center;' in str(col):
-                                            at=at+'[td colspan='+cspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][div align=center][size=3]'+col.text.strip()+'[/size][/div][/td]'
+                
+                article=[]
+                wordArt=[]
+                wordList=[]
+                divWords=pArticle.find_all('div')
+                for item in divWords:
+                    if not item.find('table') and not item.find('figure') and not item.find('h2') and not item.find('h3'):
+                        # if not item.find('figure'):
+                            tstring=str(item)
+                            word=item.text.strip()
+                            st=item.text.strip()
+                            if '　　' in tstring:
+                                word='\u3000\u3000'+word
+                            if tstring.find('<span style="font-size:16px;">')==-1:
+                                if word!='':
+                                    if tstring.find('<span class="slider-count-span">')==-1 and not word in nod:
+                                        if tstring.find('<span style="font-size:')!=-1:
+                                            if tstring.find('13px;')!=-1 or tstring.find('12px;')!=-1:
+                                                article.append('[div align=left][size=2][color=#343a40]'+word+'[/color][/size][/div]')
                                         else:
-                                            at=at+'[td colspan='+cspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][size=3]'+col.text.strip()+'[/size][/td]'
-                                        c+=int(cspan)-1
-                                    if 'rowspan=' in str(col):
-                                        x=str(col).index('rowspan=')
-                                        tar=str(col)[x+8:x+12]
-                                        rspan=re.findall(r'\d+', str(col)[x+8:x+12])[0]
-                                        if 'text-align: center;' in str(col):
-                                            at=at+'[td rowspan='+rspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][div align=center][size=3]'+col.text.strip()+'[/size][/div][/td]'
-                                        else:
-                                            at=at+'[td rowspan='+rspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][size=3]'+col.text.strip()+'[/size][/td]'
+                                            article.append('[div align=left]'+word+'[/div]\n')
+                                        wordList.append(st)
+                                        wordArt.append(st)
+                                        nod.append(word)
+                # txt(divWords)
+                for word in wordArt:
+                    i=allwords.index(word)
+                    alldivs[i]='words'
+                
+                h2s=pArticle.find_all('h2')
+                h2List=[]
+                for ele in h2s:
+                    h2=ele.text.strip()
+                    # .replace(u'\u3000', u' ').replace(u'\xa0', u' ')
+                    # if not h2 in wordList:
+                    i2=allParts.index(ele)
+                    allParts[i2]='hash'
+                    alldivs[i2]='h2'
+                    h2List.append(h2)
+                        # wordList.append(h2)
+                
+                h3s=pArticle.find_all('h3')
+                h3List=[]
+                for ele in h3s:
+                    h3=ele.text.strip()
+                    # .replace(u'\u3000', u' ').replace(u'\xa0', u' ')
+                    # if not h3 in wordList:
+                    i3=allParts.index(ele)
+                    allParts[i3]='hash'
+                    alldivs[i3]='h3'
+                    h3List.append(h3)
+                    # wordList.append(h3)
+                # txt(alldivs)
+                
+                
+
+                lis=figAll.find_all('img',{'name':'gnnPIC'})
+                liList=[]
+                for ele in lis:
+                    try:
+                        # fig = ele.find('img')
+                        pPhoto = ele['data-src']
+                        s = quote(pPhoto, safe=string.printable)
+                        tn='[div align=center width=100%][img='+s+'][/div]'
+
+                    except TypeError:
+                        pPhoto=''
+                        tn=''
+                        pass
+                    liList.append(tn)
+
+                figd=figAll.find_all('figure',{'class':'pic-desc'})
+                figdList=[]
+                for ele in figd:
+                    text=ele.text.strip()
+                    i=len(allwords)-allwords[::-1].index(text)
+                    alldivs[i-1]='[div align=center][size=2][color=#343a40]'+text+'[/color][/size][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]\n'
+                    figdList.append(text)
+                # txt(alldivs)
+                # txt(figdList)
+                
+
+
+
+                tables=ptable.find_all('tbody')
+                taList=[]
+                bgcolor1='#eff7f6'
+                bgcolor2='#f6fff8'
+                ca=1
+                # txt(tables)
+                for a in np.arange(len(tables)):
+                    at = '[div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=1]'
+                    rows = tables[a].find_all('tr')
+                    for row in rows:
+                        c=1
+                        at += '[tr]'
+                        cols = row.find_all('td')
+                        for col in cols:
+                            if 'colspan=' in str(col):
+                                x=str(col).index('colspan=')
+                                tar=str(col)[x+8:x+12]
+                                cspan=re.findall(r'\d+', str(col)[x+8:x+12])[0]
+                                if 'text-align: center;' in str(col):
+                                    at += '[td colspan='+cspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][div align=center][size=3]'+col.text.strip()+'[/size][/div][/td]'
+                                else:
+                                    at += '[td colspan='+cspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][size=3]'+col.text.strip()+'[/size][/td]'
+                                c+=int(cspan)-1
+                            if 'rowspan=' in str(col):
+                                x=str(col).index('rowspan=')
+                                tar=str(col)[x+8:x+12]
+                                rspan=re.findall(r'\d+', str(col)[x+8:x+12])[0]
+                                if 'text-align: center;' in str(col):
+                                    at += '[td rowspan='+rspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][div align=center][size=3]'+col.text.strip()+'[/size][/div][/td]'
+                                else:
+                                    at += '[td rowspan='+rspan+' bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][size=3]'+col.text.strip()+'[/size][/td]'
+                            else:
+                                if c<=len(cols):
+                                    if 'text-align: center;' in str(col):
+                                        at += '[td bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][div align=center][size=3]'+col.text.strip()+'[/div][/size][/td]'
                                     else:
-                                        if c<=len(cols):
-                                            if 'text-align: center;' in str(col):
-                                                at=at+'[td bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][div align=center][size=3]'+col.text.strip()+'[/div][/size][/td]'
-                                            else:
-                                                at=at+'[td bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][size=3]'+col.text.strip()+'[/size][/td]'
-                                    at = at.replace('\n\n', '\n').replace('\n\n\n', '\n').replace('\n\n\n\n', '\n')
-                                    c+=1
-                            at=at+'[/tr]'
-                        at=at+'[/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]'
-                        taList.append(at)
-                        ca+=1
-                    
-                    liIndex=[]
-                    ulIndex=[]
-                    idx=0
-                    for item in allParts:
-                        num2=item.find('img')
-                        if num2!=None:
-                            if num2!=-1:
+                                        at += '[td bgcolor='+(bgcolor1 if ca%2==0 else bgcolor2)+'][size=3]'+col.text.strip()+'[/size][/td]'
+                            at = at.replace('\n\n', '\n').replace('\n\n\n', '\n').replace('\n\n\n\n', '\n')
+                            c+=1
+                        at += '[/tr]'
+                    at += '[/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]'
+                    taList.append(at)
+                    ca+=1
+                
+                liIndex=[]
+                ulIndex=[]
+                idx=0
+                for item in allParts:
+                    num2=item.find('img')
+                    if num2!=None:
+                        if num2!=-1:
+                            
+                            ulIndex.append(idx)
+                            # alldivs[idx]='empty2'
+                            alldivs[idx+1]='figure'
+                            if 'name="gnnPIC"' in str(num2) and not str(num2) in nod:
+                                nod.append(str(num2))
                                 
-                                ulIndex.append(idx)
-                                # alldivs[idx]='empty2'
-                                alldivs[idx+1]='figure'
-                                if 'name="gnnPIC"' in str(num2) and not str(num2) in nod:
-                                    nod.append(str(num2))
-                                    
-                                if not str(num2) in nod:
-                                    alldivs[idx+1]='out'
+                            if not str(num2) in nod:
+                                alldivs[idx+1]='out'
 
-                                alldivs[idx]='out'
-                            
-                            
-                        idx+=1
+                            alldivs[idx]='out'
+                        
+                        
+                    idx+=1
 
+                
+                taIndex=[]
+                for ele in tables:
+                    taIndex.append(allParts.index(ele))
+                    alldivs[allParts.index(ele)]='table'
+                # txt(alldivs)
+
+                for i in np.arange(len(alldivs)):
+                    if alldivs[i].find('<span style="font-size:16px;">')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div class="gamecard__background">')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div class="article_gamercard lazyload" data-fanspage-id="488" data-from="web_gnn">')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div></div>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div> </div>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div>  </div>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div style="clear:both;"> </div>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<col')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<p> </p>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<iframe')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('</td>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<br/>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<p>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div><span style="font-size:16px;">')!=-1:
+                        if alldivs[i].find('table')==-1:
+                            alldivs[i]='out'
+                    if alldivs[i].find('<span')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('</figure>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<script')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div class="bh-grids-img-box"')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('</a>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<div>')!=-1:
+                        alldivs[i]='out'
+                    if alldivs[i].find('<p style="text-align: center;">')!=-1:
+                        alldivs[i]='out'
+                
+                # txt(alldivs)
+                
+                numW=0
+                numT=0
+                numh2=0
+                numh3=0
+                numF=0
+                for i in np.arange(len(alldivs)):
+                    if alldivs[i]=='words':
+                        alldivs[i]=article[numW]
+                        numW+=1
+                    if alldivs[i]=='table':
+                        alldivs[i]=taList[numT]
+                        numT+=1
+                    if alldivs[i]=='h2':
+                        alldivs[i]='\xa0\n[div align=left][size=5][b][color=#145292]'+h2List[numh2]+'[/b][/color][/size][/div][hr]'
+                        numh2+=1
+                    if alldivs[i]=='h3':
+                        alldivs[i]='\xa0\n'+'[div align=left][size=4][b][color=#145292]- '+h3List[numh3]+' -[/b][/color][/size][/div]'
+                        numh3+=1
+                    if alldivs[i]=='figure':
+                        try:
+                            alldivs[i]=liList[numF]+'\n'
+                            numF+=1
+                        except IndexError:
+                            alldivs[i]='out'
+                
+                for i in np.arange(len(alldivs)):
+                    if alldivs[i]=='out':
+                        alldivs[i]=''
+                    if alldivs[i]=='empty':
+                        alldivs[i]=''
+                    if alldivs[i]=='empty2':
+                        alldivs[i]=''
+                    if alldivs[i]=='empty3':
+                        alldivs[i]=''
+                    if alldivs[i]=='empty4':
+                        alldivs[i]=''
+                    alldivs[i]=alldivs[i].replace('<p style="font-size: 12px; padding: 10px 0;">','[div align=left][size=2][color=#343a40]').replace('</p>','[/color][/size][/div]\n').replace('&gt;', '>').replace('<li>', '[div align=left]．').replace('<li>', '[/div]').replace('<p style="margin-bottom: 0cm">','').replace('<p class="pic-desc">', '')
+                
+                res = [ele for ele in alldivs if ele != '']
+                text = '[div align=left][size=1][color=#343a40]發布時間: '+author+'[/color][/size][/div][hr]'
+                for i in np.arange(len(res)):
+                    text += res[i]
+                text += '[div][/div]\n[div align=left]'+'[hr][url='
+                text += myLink
+                text += '/]來源[/url] [/div]\n[div align=left]標題整理:\n'
+                for h2 in h2List:
+                    text += '[li][color=#145292]'+h2+'[/color][/li]'
+                text += '[/div][div align=left]'+review+'[/div]'
+                # text = text+'\n[div align=left]Totoal Time: '+str(dt)+'(+1.7) s[/div]'
+
+                if result:
+                    article = text
+                    tf = time.time()
+                    dt = round(tf - ts, 2)
+                    print('Total Time: ' + str(dt) + 's')
+                    post(test, title, article)
                     
-                    taIndex=[]
-                    for ele in tables:
-                        taIndex.append(allParts.index(ele))
-                        alldivs[allParts.index(ele)]='table'
-                    # txt(alldivs)
+                
+                    webbrowser.open(myLink,1)
 
-                    for i in range(len(alldivs)):
-                        if alldivs[i].find('<span style="font-size:16px;">')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div class="gamecard__background">')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div class="article_gamercard lazyload" data-fanspage-id="488" data-from="web_gnn">')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div></div>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div> </div>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div>  </div>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div style="clear:both;"> </div>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<col')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<p> </p>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<iframe')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('</td>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<br/>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<p>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div><span style="font-size:16px;">')!=-1:
-                            if alldivs[i].find('table')==-1:
-                                alldivs[i]='out'
-                        if alldivs[i].find('<span')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('</figure>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<script')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div class="bh-grids-img-box"')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('</a>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<div>')!=-1:
-                            alldivs[i]='out'
-                        if alldivs[i].find('<p style="text-align: center;">')!=-1:
-                            alldivs[i]='out'
-                    
-                    # txt(alldivs)
-                    
-                    numW=0
-                    numT=0
-                    numh2=0
-                    numh3=0
-                    numF=0
-                    for i in range(len(alldivs)):
-                        if alldivs[i]=='words':
-                            alldivs[i]=article[numW]
-                            numW+=1
-                        if alldivs[i]=='table':
-                            alldivs[i]=taList[numT]
-                            numT+=1
-                        if alldivs[i]=='h2':
-                            alldivs[i]='\xa0\n[div align=left][size=5][b][color=#145292]●'+h2List[numh2]+'[/b][/color][/size][/div][hr]'
-                            numh2+=1
-                        if alldivs[i]=='h3':
-                            alldivs[i]='\xa0\n'+'[div align=left][size=4][b][color=#145292]'+h3List[numh3]+'[/b][/color][/size][/div]'
-                            numh3+=1
-                        if alldivs[i]=='figure':
-                            try:
-                                alldivs[i]=liList[numF]+'\n'
-                                numF+=1
-                            except IndexError:
-                                alldivs[i]='out'
-                    
-                    for i in range(len(alldivs)):
-                        if alldivs[i]=='out':
-                            alldivs[i]=''
-                        if alldivs[i]=='empty':
-                            alldivs[i]=''
-                        if alldivs[i]=='empty2':
-                            alldivs[i]=''
-                        if alldivs[i]=='empty3':
-                            alldivs[i]=''
-                        if alldivs[i]=='empty4':
-                            alldivs[i]=''
-                        alldivs[i]=alldivs[i].replace('<p style="font-size: 12px; padding: 10px 0;">','[div align=left][size=2][color=#343a40]').replace('</p>','[/color][/size][/div]\n').replace('&gt;', '>').replace('<li>', '[div align=left]．').replace('<li>', '[/div]').replace('<p style="margin-bottom: 0cm">','').replace('<p class="pic-desc">', '')
-                    
-                    res = [ele for ele in alldivs if ele != '']
-                    text='[div align=left][size=1][color=#343a40]發布時間: '+author+'[/color][/size][/div][hr]'
-                    for i in range(len(res)):
-                        text = text+res[i]
-                    text = text+'[div][/div]\n[div align=left]'+'[hr][url='
-                    text = text+myLink
-                    text = text+'/]來源[/url] [/div]\n[div align=left]標題整理:\n'
-                    for h2 in h2List:
-                        text = text+'[li][color=#145292]'+h2+'[/color][/li]'
-                    text = text+'[/div][div align=left]'+review+'[/div]'
-                    tf=time.time()
-                    dt=round(tf-ts,2)
-                    # text = text+'\n[div align=left]Totoal Time: '+str(dt)+'(+1.7) s[/div]'
-                    pyperclip.copy(text)
-
-                    if result:
-                        pyperclip.copy(text)
-                        # print('Article Copied')
-
-                        #內文
-                        pyautogui.moveTo(-900, 600)
-                        pyautogui.click()
-                        # pyautogui.hotkey('ctrl', 'a')
-                        pyautogui.hotkey('ctrl', 'v')
-
-                        # with Listener(on_press = show) as listener:   
-                        #     listener.join()
-
-                        if not test:
-                            # #標題
-                            
-                            pyperclip.copy(title)
-                            # print('Title Copied')
-                            pyautogui.moveTo(-900, 410)
-                            pyautogui.click()
-                            # pyautogui.hotkey('ctrl', 'a')
-                            pyautogui.hotkey('ctrl', 'v')
-
-                        #預覽
-                        pyautogui.moveTo(-180, 170)
-                        pyautogui.click()
-
-                        #關閉預覽
-                        pyautogui.moveTo(-42, 168)
-                        pyautogui.click()
-
-                        #發佈
-                        pyautogui.moveTo(-100, 170)
-                        pyautogui.click()
-
-                        #確認
-                        pyautogui.moveTo(-530, 760)
-                        pyautogui.click()
-
-                        tf=time.time()
-                        dt=round(tf-ts,2)
-                        print('Totoal Time: '+str(dt)+'s')
-                        webbrowser.open(myLink,1)
-
-                    if not test:
-                        fi = open(latest, 'w')
-                        fi.write(id+'\n'+rec)
-                        fi.close()
-                    break
+                if not test:
+                    fi = open(latest, 'w')
+                    fi.write(id+'\n'+rec)
+                    fi.close()
+                break
         delay_choices = [0.5, 0.2, 0.4]  # 延遲的秒數
         delay = random.choice(delay_choices)  # 隨機選取秒數
         time.sleep(delay)
