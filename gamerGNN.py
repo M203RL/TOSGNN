@@ -175,32 +175,32 @@ while True:
                     pArticle=pArticle.find('div')
                 for i in allParts:
                     if str(i).find('td')==-1 and str(i).find('gamecard')==-1:
-                        tx=i.text.strip()
+                        tx = i.text.strip()
                         allwords.append(tx)
                     else:
                         allwords.append('')
                 # txt(allwords)
 
-                ytList=[]
-                ytVideos=pArticle.find_all('iframe')
+                ytList = []
+                ytVideos = pArticle.find_all('iframe')
                 for v in ytVideos:
-                    ytLink=v['data-src']
-                    ix=allParts.index(v)
-                    alldivs[ix]='[div][movie='+ytLink+' width=640 height=360][/div]'
+                    ytLink = v['data-src']
+                    ix = allParts.index(v)
+                    alldivs[ix] = '[div][movie='+ytLink+' width=640 height=360][/div]'
                     ytList.append(ytLink)
 
 
                 
-                article=[]
-                wordArt=[]
-                wordList=[]
-                divWords=pArticle.find_all('div')
+                article = []
+                wordArt = []
+                wordList = []
+                divWords = pArticle.find_all('div')
                 for item in divWords:
                     if not item.find('table') and not item.find('figure') and not item.find('h2') and not item.find('h3'):
                         # if not item.find('figure'):
-                            tstring=str(item)
-                            word=item.text.strip()
-                            st=item.text.strip()
+                            tstring = str(item)
+                            word = item.text.strip()
+                            st = item.text.strip()
                             if '　　' in tstring:
                                 word='\u3000\u3000'+word
                             if tstring.find('<span style="font-size:16px;">')==-1:
@@ -210,7 +210,7 @@ while True:
                                             if tstring.find('13px;')!=-1 or tstring.find('12px;')!=-1:
                                                 article.append('[div align=left][size=2][color=#343a40]'+word+'[/color][/size][/div]')
                                         else:
-                                            article.append('[div align=left]'+word+'[/div]\n')
+                                            article.append('[div align=left]'+word+'[/div]')
                                         wordList.append(st)
                                         wordArt.append(st)
                                         nod.append(word)
@@ -253,7 +253,7 @@ while True:
                         # fig = ele.find('img')
                         pPhoto = ele['data-src']
                         s = quote(pPhoto, safe=string.printable)
-                        tn='[div align=center width=100%][img='+s+'][/div]'
+                        tn='[div align=center width=100%][img='+s+'][/div]\n'
 
                     except TypeError:
                         pPhoto=''
@@ -266,7 +266,7 @@ while True:
                 for ele in figd:
                     text=ele.text.strip()
                     i=len(allwords)-allwords[::-1].index(text)
-                    alldivs[i-1]='[div align=center][size=2][color=#343a40]'+text+'[/color][/size][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]\n'
+                    alldivs[i-1]='[div align=center][size=2][color=#343a40]'+text+'[/color][/size][/div]' + space
                     figdList.append(text)
                 # txt(alldivs)
                 # txt(figdList)
@@ -314,8 +314,8 @@ while True:
                             at = at.replace('\n\n', '\n').replace('\n\n\n', '\n').replace('\n\n\n\n', '\n')
                             c+=1
                         at += '[/tr]'
-                    at += '[/table][/div][div][table width=100% cellspacing=1 cellpadding=1 border=0][tr][td][/td][/tr][/table][/div]'
-                    taList.append(at)
+                    at += '[/table][/div][div]'
+                    taList.append(space + at + space)
                     ca+=1
                 
                 liIndex=[]
@@ -401,20 +401,20 @@ while True:
                 numF=0
                 for i in np.arange(len(alldivs)):
                     if alldivs[i]=='words':
-                        alldivs[i]=article[numW]
+                        alldivs[i] = space + article[numW] + space
                         numW+=1
                     if alldivs[i]=='table':
                         alldivs[i]=taList[numT]
                         numT+=1
                     if alldivs[i]=='h2':
-                        alldivs[i]='\xa0\n[div align=left][size=5][b][color=#145292]'+h2List[numh2]+'[/b][/color][/size][/div][hr]'
+                        alldivs[i]=space + '\n[div align=left][size=5][b][color=#145292]' + h2List[numh2]+ '[/color][/b][/size][/div][hr]'
                         numh2+=1
                     if alldivs[i]=='h3':
-                        alldivs[i]='\xa0\n'+'[div align=left][size=4][b][color=#145292]- '+h3List[numh3]+' -[/b][/color][/size][/div]'
+                        alldivs[i]=space + '\n[div align=left][size=4][b][color=#145292]- ' + h3List[numh3] + ' -[/color][/b][/size][/div]' + space
                         numh3+=1
                     if alldivs[i]=='figure':
                         try:
-                            alldivs[i]=liList[numF]+'\n'
+                            alldivs[i]=liList[numF]
                             numF+=1
                         except IndexError:
                             alldivs[i]='out'
@@ -430,7 +430,7 @@ while True:
                         alldivs[i]=''
                     if alldivs[i]=='empty4':
                         alldivs[i]=''
-                    alldivs[i]=alldivs[i].replace('<p style="font-size: 12px; padding: 10px 0;">','[div align=left][size=2][color=#343a40]').replace('</p>','[/color][/size][/div]\n').replace('&gt;', '>').replace('<li>', '[div align=left]．').replace('<li>', '[/div]').replace('<p style="margin-bottom: 0cm">','').replace('<p class="pic-desc">', '')
+                    alldivs[i]=alldivs[i].replace('<p style="font-size: 12px; padding: 10px 0;">','[div align=left][size=2][color=#343a40]').replace('</p>','[/color][/size][/div]').replace('&gt;', '>').replace('<li>', '[div align=left]．').replace('<li>', '[/div]').replace('<p style="margin-bottom: 0cm">','').replace('<p class="pic-desc">', '')
                 
                 res = [ele for ele in alldivs if ele != '']
                 text = '[div align=left][size=1][color=#343a40]發布時間: '+author+'[/color][/size][/div][hr]'
