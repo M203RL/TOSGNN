@@ -127,7 +127,6 @@ while True:
     ix += 1
     
     try:
-        print('\n')
         # target = '神魔之塔'
         if target in h1:
             newResponse = requests.get(url = myLink, headers = headers)
@@ -238,12 +237,7 @@ while True:
                             continue
                         if '<li' in str(item):
                             continue
-                    # if ('<div' in str(item) or '<center' in str(item)) and '<table' in str(item):
-                    #     tb = item.find('td')
-                    #     if len(tb.find_all('div'))==0 or len(item.find_all('table'))==0:
-                    #         continue
                     if '<table' in str(item) and '<div' not in str(item)[0:5] and '<center' not in str(item)[0:8]:
-                        # allwords += ['table']
                         tbody = item.find('tbody')
                         rows = tbody.find_all('tr')
                         at = '[div][table width=100% cellspacing=1 cellpadding=1 border=1]'
