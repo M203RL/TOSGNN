@@ -11,7 +11,7 @@ import pyperclip
 import time
 
 ##場外
-link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
+link1 = ''
 
 ##專版
 link2 = 'https://forum.gamer.com.tw/post1.php?bsn=23805&type=1'
