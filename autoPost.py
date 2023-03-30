@@ -64,7 +64,6 @@ def initial(test):
 
 ##1.15s
 def post(test, title, article):
-    # ts = time.time()
     if not test:
         ##標題
         tt = driver.find_element("name", 'title')
