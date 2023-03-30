@@ -135,23 +135,23 @@ while True:
                 print("New Announcement Found")
                 Path(folder).mkdir(parents=True, exist_ok=True)
 
-                # pThumbnail = pArticle.find_all('img')
-                # img = []
-                # uploaded_image = []
-                # for item in tqdm(range(len(pThumbnail))):
-                #     pPhoto = pThumbnail[item]['src']
-                #     if not pPhoto in img:
-                #         img.append(pPhoto)
-                #         s = quote(pPhoto, safe=string.printable)
-                #         urllib.request.urlretrieve(s, folder + f"\\cover{item}.jpg")
-                #         PATH = folder + f"\\cover{item}.jpg"
-                #         im = pyimgur.Imgur(CLIENT_ID)
-                #         uploaded_image = im.upload_image(PATH, title=id)
-                #         if item == 0:
-                #             tn='[div][img='+uploaded_image.link+' thumbnail=yes width=999][/div]'
-                #         else:
-                #             tn='[div][img='+uploaded_image.link+'  width=999][/div]'
-                #         list.append(tn)
+                pThumbnail = pArticle.find_all('img')
+                img = []
+                uploaded_image = []
+                for item in tqdm(range(len(pThumbnail))):
+                    pPhoto = pThumbnail[item]['src']
+                    if not pPhoto in img:
+                        img.append(pPhoto)
+                        s = quote(pPhoto, safe=string.printable)
+                        urllib.request.urlretrieve(s, folder + f"\\cover{item}.jpg")
+                        PATH = folder + f"\\cover{item}.jpg"
+                        im = pyimgur.Imgur(CLIENT_ID)
+                        uploaded_image = im.upload_image(PATH, title=id)
+                        if item == 0:
+                            tn='[div][img='+uploaded_image.link+' thumbnail=yes width=999][/div]'
+                        else:
+                            tn='[div][img='+uploaded_image.link+'  width=999][/div]'
+                        list.append(tn)
                 
                 titleList = []
                 pContent = pArticle.find('figure', {"class": "wp-block-table"})
