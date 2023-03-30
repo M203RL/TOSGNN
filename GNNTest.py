@@ -73,15 +73,8 @@ timer=True
 LinkSet=False
 # LinkSet=True
 
-##reviewInput 心得
-reviewInput=False
-# reviewInput=True
-
-review='新黑金的龍刻變成該種族通用了\n雖然組全機械倍率會比較低\n不過還是蠻期待全機械的表現'
-# review='施工中...\n格式可能會亂掉\n'
-if reviewInput:
-    review=review+input("心得: ")
-print("心得: "+review)
+review=''
+print("心得: \n"+review)
     
 
 initial(test)
