@@ -10,23 +10,26 @@ import webbrowser
 import pyperclip
 import time
 
+##場外
+link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
+
+##專版
+link2 = 'https://forum.gamer.com.tw/post1.php?bsn=23805&type=1'
+
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 options.add_argument("disable-infobars") 
+
 # path of the chrome's profile parent directory - change this path as per your system
 options.add_argument(r"user-data-dir=F:\\TOS\\News\\User Data")
-# name of the directory - change this directory name as per your system
+
 options.add_argument("--profile-directory=Default")
 options.add_argument("--disable-popup-blocking")
 options.add_argument("--disable-extensions")
 options.add_argument("--disable-gpu")
 options.add_argument('--no-sandbox')
-# options.add_argument("--window-size=1920,1080")
-# options.add_argument("--start-maximized")
-# options.add_argument("--headless")
 options.add_argument('--blink-settings=imagesEnabled=false')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options = options)
-# driver.set_window_size(2560, 1440)
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_experimental_option('useAutomationExtension', False)
@@ -35,10 +38,10 @@ options.add_experimental_option('useAutomationExtension', False)
 def initial(test):
     if test:
         ##場外
-        driver.get("")
+        driver.get(link1)
     else:
         ##專版
-        driver.get("https://forum.gamer.com.tw/post1.php?bsn=23805&type=1")
+        driver.get(link2)
 
         select = Select(driver.find_element("name", 'nsubbsn'))
         select.select_by_value('3')
@@ -68,45 +71,29 @@ def post(test, title, article):
         pyperclip.copy(title)
         tt.send_keys(Keys.CONTROL, 'v')
 
-    
-    
     ##內文
     text = driver.find_element("id", 'source')
     pyperclip.copy(article)
     text.send_keys(Keys.CONTROL, 'v')
     
-    # ##預覽
-    # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.preview();"]'))).click()
-
-    # # ##關閉預覽
-    # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[class="dialogify__close"]'))).click()
-    
     ##發文
-    # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.post();"]'))).click()
     target = driver.find_element(By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.post();"]')
     target.click()
     
 
-    # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[class="btn btn-insert btn-primary"]'))).click()
-    # driver.get_screenshot_as_file("screenshot.png")
     target = driver.find_element(By.CSS_SELECTOR, 'button[class="btn btn-insert btn-primary"]')
     target.click()
-    # tf = time.time()
-    # dt = round(tf - ts, 2)
-    # print('Total Time: ' + str(dt) + 's')
     get_url = driver.current_url
     if test:
-        while get_url == "":
+        while get_url == link1:
             get_url = driver.current_url
             time.sleep(0.01)
     if not test:
-        while get_url == "https://forum.gamer.com.tw/post1.php?bsn=23805&type=1":
+        while get_url == link2:
             get_url = driver.current_url
             time.sleep(0.01)
     
     webbrowser.open(get_url,1)
-    # driver.close()
-    # driver.quit()
 
 if __name__ == '__main__':
     ts = time.time()
