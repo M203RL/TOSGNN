@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import random
 import time
+from pathlib import Path
 
 def formatTime(time):
     if time<10:
@@ -17,8 +18,11 @@ result = time.strftime("%Y/%m/%d %H:%M:%S", t)
 print("Start Time: "+result)
 
 user_agent_list = ["Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; WOW64) Gecko/20100101 Firefox/61.0", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)", "Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10.5; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15"]
-file='Link.txt'
-idx=0
+file = 'Link.txt'
+if not Path(file).is_file():
+    fi = open(file, 'w')
+    fi.close()
+idx = 0
 for k in range(2):
     for j in range(12):
         year=23-k
@@ -52,7 +56,7 @@ for k in range(2):
         m=formatTime(m)
         s=formatTime(s)
         print('Time Lapsed: '+h+':'+m+':'+s+', Loops: '+str(idx)+'(20'+str(year)+'/'+str(month)+')', end="\r")
-        delay_choices = [8, 5, 10, 6, 11, 9, 3,1,2,7]  # 延遲的秒數
+        delay_choices = [8, 5, 10, 6, 11, 9, 3, 1, 2, 7]  # 延遲的秒數
         delay = random.choice(delay_choices)  # 隨機選取秒數
         time.sleep(delay)
         idx+=1
