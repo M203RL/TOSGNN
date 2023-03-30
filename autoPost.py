@@ -35,7 +35,7 @@ options.add_experimental_option('useAutomationExtension', False)
 def initial(test):
     if test:
         ##場外
-        driver.get("https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1")
+        driver.get("")
     else:
         ##專版
         driver.get("https://forum.gamer.com.tw/post1.php?bsn=23805&type=1")
@@ -96,7 +96,7 @@ def post(test, title, article):
     # print('Total Time: ' + str(dt) + 's')
     get_url = driver.current_url
     if test:
-        while get_url == "https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1":
+        while get_url == "":
             get_url = driver.current_url
             time.sleep(0.01)
     if not test:
