@@ -45,7 +45,7 @@ def initial(test):
 
         select = Select(driver.find_element("name", 'subject'))
         select.select_by_value('2')
-
+    time.sleep(0.1)
     if test:
         driver.find_element("id", 'editor').click()
     else:
@@ -61,7 +61,7 @@ def initial(test):
 
 ##1.15s
 def post(test, title, article):
-    ts = time.time()
+    # ts = time.time()
     if not test:
         ##標題
         tt = driver.find_element("name", 'title')
@@ -81,7 +81,7 @@ def post(test, title, article):
     # # ##關閉預覽
     # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[class="dialogify__close"]'))).click()
     
-    # ##發文
+    ##發文
     # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.post();"]'))).click()
     target = driver.find_element(By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.post();"]')
     target.click()
@@ -91,9 +91,9 @@ def post(test, title, article):
     # driver.get_screenshot_as_file("screenshot.png")
     target = driver.find_element(By.CSS_SELECTOR, 'button[class="btn btn-insert btn-primary"]')
     target.click()
-    tf = time.time()
-    dt = round(tf - ts, 2)
-    print('Total Time: ' + str(dt) + 's')
+    # tf = time.time()
+    # dt = round(tf - ts, 2)
+    # print('Total Time: ' + str(dt) + 's')
     get_url = driver.current_url
     if test:
         while get_url == "https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1":
@@ -109,5 +109,9 @@ def post(test, title, article):
     # driver.quit()
 
 if __name__ == '__main__':
+    ts = time.time()
     initial(True)
     post(True, 'title', 'adsad')
+    tf = time.time()
+    dt = round(tf - ts, 2)
+    print('Total Time: ' + str(dt) + 's')
