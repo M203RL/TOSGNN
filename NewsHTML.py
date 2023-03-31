@@ -62,7 +62,7 @@ user_agent_list = ["Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHT
 
 ##test 場外測試
 test=False
-test=True
+# test=True
 
 ##result 發布文章
 result=False
@@ -70,7 +70,7 @@ result=True
 
 ##LinkSet 指定連結
 LinkSet=False
-LinkSet=True
+# LinkSet=True
 
 ##reviewInput 心得
 reviewInput=False
@@ -143,14 +143,14 @@ while True:
                     if not pPhoto in img:
                         img.append(pPhoto)
                         s = quote(pPhoto, safe=string.printable)
-                        urllib.request.urlretrieve(s, folder + f"\\cover{item}.jpg")
-                        PATH = folder + f"\\cover{item}.jpg"
+                        urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
+                        PATH = f"{folder}\\cover{item}.jpg"
                         im = pyimgur.Imgur(CLIENT_ID)
                         uploaded_image = im.upload_image(PATH, title=id)
                         if item == 0:
-                            tn='[div][img='+uploaded_image.link+' thumbnail=yes width=999][/div]'
+                            tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
                         else:
-                            tn='[div][img='+uploaded_image.link+'  width=999][/div]'
+                            tn = f'[div][img={uploaded_image.link} width=999][/div]'
                         list.append(tn)
                 
                 titleList = []
@@ -167,7 +167,7 @@ while True:
                 for title in titles:
                     text = title.text.strip()
                     if text != '':
-                        titleList += ['[b][color=#790000]' + text+ '[/color][/b]']
+                        titleList .append(f'[b][color=#790000]{text}[/color][/b]')
 
                 linkList = []
                 textList = []
@@ -194,14 +194,14 @@ while True:
                         alltext = re.search(r'<a .*?href=".*?".*?>.*?</a>', af).group()
                         link = re.search(r'<a .*?href="(.*?)".*?>.*?</a>', af).group(1)
                         text = re.search(r'<a .*?>(.*?)</a>', af).group(1)
-                        af = re.sub(alltext, '[url=' + link + ']' + text + '[/url]', af)
+                        af = re.sub(alltext, f'[url={link}]{text}[/url]', af)
                     list.append(af)
                 text = ''
                 for i in range(len(list)):
-                    text = text + list[i]
-                text += '[hr][div]' + '[url=' + myLink + '/]來源[/url] [/div]'
-                text += '[div]更新時間: '+timePost+'[/div]'
-                text += '[div]'+review+'[/div]'
+                    text += list[i]
+                text += f'[hr][div][url={myLink}]來源[/url] [/div]'
+                text += f'[div]更新時間: {timePost}[/div]'
+                text += f'[div]{review}[/div]'
                 text += '懶人包:\n'
                 for x in titleList:
                     if '★' in x:
@@ -224,14 +224,14 @@ while True:
                         json.dump(data, fi)
                         fi.close()
                 break
-            tCurrent=time.time()
-            tLapsed=round(tCurrent-tStart)
+            tCurrent = time.time()
+            tLapsed = round(tCurrent - tStart)
             m, s = divmod(tLapsed, 60)
             h, m = divmod(m, 60)
-            h=formatTime(h)
-            m=formatTime(m)
-            s=formatTime(s)
-            print('Time Lapsed: '+h+':'+m+':'+s+', Loops: '+str(idx), end="\r")
+            h = formatTime(h)
+            m = formatTime(m)
+            s = formatTime(s)
+            print(f'Time Lapsed: {h}:{m}:{s}, Loops: {str(idx)}', end="\r")
             delay_choices = [8, 5, 10, 6, 11, 9, 13, 15, 12, 7]  # 延遲的秒數
             delay = random.choice(delay_choices)  # 隨機選取秒數
             time.sleep(delay)
