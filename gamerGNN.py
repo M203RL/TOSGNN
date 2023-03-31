@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import datetime
 from pathlib import Path
 from urllib.parse import quote
 from autoPost import post, initial
@@ -30,12 +29,6 @@ def txt(list):
         pyperclip.copy(text)
         print('Text Copied')
 
-kt='\'\\x16\''
-def show(key):
-    if format( key) == kt:
-        # Stop listener
-        return False
-
 def formatTime(time):
     if time<10:
         return '0'+str(time)
@@ -47,34 +40,27 @@ year=int(time.strftime('%y',t))
 month=int(time.strftime('%m',t))
 
 result = time.strftime("%Y/%m/%d %H:%M:%S", t)
-print("Start Time: "+result)
+print(f"Start Time: {result}")
 animation = "|/—\\"
 ix = 0
 
 target = '神魔之塔'
-local_d = datetime.datetime.today()
-d_format = local_d.strftime('%Y%m%d')
 cd = os.getcwd()
 user_agent_list = ["Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; WOW64) Gecko/20100101 Firefox/61.0", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)", "Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10.5; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15"]
 
 ##test 場外測試
 test=False
-# test=True
+test=True
 
 ##result 發布文章
 result=False
 result=True
 
-##timer 設定發文時間
-timer=False
-timer=True
+testLink = 'https://gnn.gamer.com.tw/detail.php?sn=247559'
 
-##LinkSet 指定連結
-LinkSet=False
-# LinkSet=True
 
 review=''
-print("心得: \n"+review)
+print("心得: "+review)
     
 
 initial(test)
@@ -83,25 +69,23 @@ while True:
     hour=int(time.strftime('%H',t))
     min=int(time.strftime('%M',t))
     sec=int(time.strftime('%S',t))
-    if timer:
+    if not test:
         while hour!=hs or min!=ms or sec<=ss:
             if hour>hs:
                 ds=(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
             else:
                 ds=(hs-hour)*60*60+(ms-min)*60+(ss-sec)
-            print(' '+animation[round(ix*0.25) % len(animation)]+'T-'+str(ds)+'s         ',end='\r')
+            print(f' {animation[round(ix*0.25) % len(animation)]}T-{str(ds)}s         ',end='\r')
             ix+=1
             time.sleep(0.001)
             t = time.localtime()
             hour=int(time.strftime('%H',t))
             min=int(time.strftime('%M',t))
             sec=int(time.strftime('%S',t))
+        time.sleep(1)
     ts = time.time()
-    time.sleep(1)
     url='https://gnn.gamer.com.tw/index.php?k=4'
 
-    # if test:
-    #     url = f'https://gnn.gamer.com.tw/index.php?yy=20{year}&mm={month}&k=4'
     headers = {'User-Agent': random.choice(user_agent_list)}
     response = requests.get(url=url, headers=headers)
     soup = BeautifulSoup(response.text, 'lxml')
@@ -115,15 +99,15 @@ while True:
             dir = i.find('a')
             if not 'https:' in dir:
                 myLink = 'https:' + dir.get('href')
-            if LinkSet:
-                myLink = 'https://gnn.gamer.com.tw/detail.php?sn=247111'
+            if test:
+                myLink = testLink
             response = requests.get(url=myLink, headers=headers)
             soup = BeautifulSoup(response.text, 'lxml')
             pArticle = soup.find("div", {"class": "BH-lbox GN-lbox3 gnn-detail-cont"})
             h1 = pArticle.find('h1').text.strip()
             break
                 
-    print(' '+animation[round(ix*1) % len(animation)]+'Waiting...', end="\r")
+    print(f' {animation[round(ix*1) % len(animation)]}Waiting...', end="\r")
     ix += 1
     
     try:
@@ -156,9 +140,7 @@ while True:
                 pArticle = newSoup.find("div", {"class": "GN-lbox3B"})
                 figAll = newSoup.find("div", {"class": "GN-lbox3B"})
                 ptable = pArticle.find('div')
-
                 allParts = pArticle.find_all()
-
                 allitems = []
                 allwords = []
                 h2List = []
@@ -207,15 +189,15 @@ while True:
                         continue
                     words = item.text.strip()
                     if '　　' in str(item):
-                        allwords += [(space + '[div align=left]\u3000\u3000' + words + '[/div]' + space)]
+                        allwords.append(f'{space}[div align=left]\u3000\u3000{words}[/div]{space}')
                         continue
                     if '<h2' in str(item)[0:3] and '<div' not in str(item)[0:5]:
-                        h2List += [(words)]
-                        allwords += [(space + '\n[div align=left][size=5][b][color=#145292]' + words + '[/color][/b][/size][/div][hr]')]
+                        h2List.append(words)
+                        allwords.append(f'{space}{space}{space}\n[div align=left][size=5][b][color=#145292]{words}[/color][/b][/size][/div][hr]')
                         continue
                     if '<h3' in str(item)[0:3] and '<div' not in str(item)[0:5]:
-                        h3List += [(words)]
-                        allwords += [(space + '\n[div align=left][size=4][b][color=#145292]- ' + words + ' -[/color][/b][/size][/div]' + space)]
+                        h3List.append(words)
+                        allwords.append(f'{space}\n[div align=left][size=4][b][color=#145292]- {words} -[/color][/b][/size][/div]{space}')
                         continue
                     if '<img' in str(item):
                         try:
@@ -225,15 +207,15 @@ while True:
                                 # pPhoto = item['data-src']
                                 s = quote(link, safe=string.printable)
                                 if not s in imgList:
-                                    tn = '[div align=center width=100%][img='+s+' width=999][/div]'
-                                    allwords += [(tn)]
-                                    imgList += [(s)]
+                                    tn = f'[div align=center width=100%][img={s} width=999][/div]'
+                                    allwords.append(tn)
+                                    imgList.append(s)
                                 continue
                         except TypeError:
                             continue
                     if 'pic-desc' in str(item) and '<div' not in str(item)[0:5]:
                         if not '<li' in str(item):
-                            allwords += [('[div align=center][size=2][color=#343a40]'+words+'[/color][/size][/div]' + space)]
+                            allwords.append(f'[div align=center][size=2][color=#343a40]{words}[/color][/size][/div]{space}')
                             continue
                         if '<li' in str(item):
                             continue
@@ -251,67 +233,66 @@ while True:
                                     tar = str(col)[x+8:x+12]
                                     cspan = re.findall(r'\d+', str(col)[x+8:x+12])[0]
                                     if 'text-align: center;' in str(col):
-                                        at += '[td colspan=' + cspan + ' bgcolor=' + (bgcolor1 if ca%2==0 else bgcolor2) + '][div align=center][size=3]' + col.text.strip() + '[/size][/div][/td]'
+                                        at += f'[td colspan={cspan} bgcolor={(bgcolor1 if ca%2==0 else bgcolor2)}][div align=center][size=3]{col.text.strip()}[/size][/div][/td]'
                                     else:
-                                        at += '[td colspan=' + cspan + ' bgcolor=' + (bgcolor1 if ca%2==0 else bgcolor2) + '][size=3]' + col.text.strip() + '[/size][/td]'
-                                    c+=int(cspan)-1
+                                        at += f'[td colspan={cspan} bgcolor={(bgcolor1 if ca%2==0 else bgcolor2)}][size=3]{col.text.strip()}[/size][/td]'
+                                    c += int(cspan) - 1
                                 if 'rowspan=' in str(col):
                                     x = str(col).index('rowspan=')
                                     tar = str(col)[x + 8 : x + 12]
                                     rspan = re.findall(r'\d+', str(col)[x + 8 : x + 12])[0]
                                     if 'text-align: center;' in str(col):
-                                        at += '[td rowspan=' + rspan + ' bgcolor=' + (bgcolor1 if ca%2==0 else bgcolor2) + '][div align=center][size=3]' + col.text.strip() + '[/size][/div][/td]'
+                                        at += f'[td rowspan={rspan} bgcolor={(bgcolor1 if ca%2==0 else bgcolor2)}][div align=center][size=3]{col.text.strip()}[/size][/div][/td]'
                                     else:
-                                        at += '[td rowspan=' + rspan + ' bgcolor=' + (bgcolor1 if ca%2==0 else bgcolor2) + '][size=3]' + col.text.strip() + '[/size][/td]'
+                                        at += f'[td rowspan={rspan} bgcolor={(bgcolor1 if ca%2==0 else bgcolor2)}][size=3]{col.text.strip()}[/size][/td]'
                                 else:
                                     if c<=len(cols):
                                         if 'text-align: center;' in str(col):
-                                            at += '[td bgcolor=' + (bgcolor1 if ca%2==0 else bgcolor2) + '][div align=center][size=3]' + col.text.strip() + '[/div][/size][/td]'
+                                            at += f'[td bgcolor={(bgcolor1 if ca%2==0 else bgcolor2)}][div align=center][size=3]{col.text.strip()}[/div][/size][/td]'
                                         else:
-                                            at += '[td bgcolor=' + (bgcolor1 if ca%2==0 else bgcolor2) + '][size=3]' + col.text.strip() + '[/size][/td]'
+                                            at += f'[td bgcolor={(bgcolor1 if ca%2==0 else bgcolor2)}][size=3]{col.text.strip()}[/size][/td]'
                                 at = at.replace('\n\n', '\n').replace('\n\n\n', '\n').replace('\n\n\n\n', '\n')
                                 c += 1
                             at += '[/tr]'
                         at += '[/table][/div][div]'
                         ca += 1
-                        allwords += [(space + at + space)]
+                        allwords.append(space + at + space)
                         continue
                         
                     if 'quote-box' in str(item) and '<div' in str(item):
-                        words = '[div][table width=100% cellspacing=1 cellpadding=1 border=1][tr][td]' + words + '[/td][/tr][/table][div]'
-                        allwords += [(space + words + space)]
+                        words = f'[div][table width=100% cellspacing=1 cellpadding=1 border=1][tr][td]{words}[/td][/tr][/table][div]'
+                        allwords.append(space + words + space)
                         continue
                         
                     if words != '':
                         if '</li>' in str(item):
                             if not '</ul>' in str(item):
                                 words = '[li]' + words + '[/li]' 
-                                allwords += [(space + '[div align=left]' + words + '[/div]' + space)]
+                                allwords.append(f'{space}[div align=left]{words}[/div]{space}')
                             else:
                                 words = ''
                             continue
                         if str(item).find('span style="color:') != -1:
                             if str(item).find('style="font-size:') != -1:
                                 if str(item).find('</div>') != -1:
-                                    words = '[size=2][b][color=#4d4d4d]' + words + '[/b][/color][/size]'
-                                    allwords += [(space + '[div align=left]' + words + '[/div]' + space)]
+                                    words = f'[size=2][b][color=#4d4d4d]{words}[/b][/color][/size]'
+                                    allwords.append(f'{space}[div align=left]{words}[/div]{space}')
                                     continue
                             if str(item).find('</div>') == -1:
                                 words = ''
                                 item = ''
                                 continue
                 
-                text = '[div align=left][size=1][color=#343a40]發布時間: ' + author + '[/color][/size][/div][hr]'
+                text = f'[div align=left][size=1][color=#343a40]發布時間: {author}[/color][/size][/div][hr]'
                 if test:
-                    text = '[div align=left][b]測試[b][/div]\n[div align=left][size=1][color=#343a40]發布時間: ' + author + '[/color][/size][/div][hr]'
+                    text = f'[div align=left][b]測試[b][/div]\n[div align=left][size=1][color=#343a40]發布時間: {author}[/color][/size][/div][hr]'
+
                 for i in np.arange(len(allwords)):
                     text += allwords[i]
-                text += '[div][/div]\n[div align=left]' + '[hr][url='
-                text +=  myLink
-                text += ']來源[/url][/div]\n[div align=left]標題整理:\n'
+                text += f'[div][/div]\n[div align=left][hr][url={myLink}]來源[/url][/div]\n[div align=left]標題整理:\n'
                 for h2 in h2List:
-                    text += '[color=#145292]● ' + h2 + '[/color]\n'
-                text += '[/div][div align=left]' + review + '[/div]'
+                    text += f'[color=#145292][b]● {h2}[/b][/color]\n'
+                text += f'[url=https://www.tosdownload.com/]下載連結[/url]{space}[/div][div align=left]{review}[/div]'
 
                 tf = time.time()
                 dt = round(tf - ts, 4)
