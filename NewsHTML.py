@@ -80,6 +80,8 @@ reviewInput=False
 Alarm=False
 # Alarm=True
 
+testLink = 'https://gnn.gamer.com.tw/detail.php?sn=247559'
+
 review=''
 # review='施工中...\n格式可能會亂掉'
 if reviewInput:
@@ -111,7 +113,7 @@ while True:
         try:
             myLink = pA.get('href')
             if LinkSet:
-                myLink = 'https://towerofsaviors.com/2023/03/24/%e3%80%90%e9%87%91%e5%ad%97%e5%a1%94%e7%9a%84%e5%95%9f%e5%8b%95%e2%80%a7-%e5%a7%8b%e7%a5%96%e5%85%83%e7%b4%a0%e7%9a%84%e5%8a%9b%e9%87%8f%e7%88%86%e7%99%bc%e3%80%91%e6%85%b6%e7%a5%9d%e6%b4%bb%e5%8b%95/'
+                myLink = testLink
 
             newResponse = requests.get(url=myLink)
             newSoup = BeautifulSoup(newResponse.text, 'lxml')
