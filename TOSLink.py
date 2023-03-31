@@ -53,7 +53,7 @@ for k in range(2):
         h=formatTime(h)
         m=formatTime(m)
         s=formatTime(s)
-        print('Time Lapsed: '+h+':'+m+':'+s+', Loops: '+str(idx)+'(20'+str(year)+'/'+str(month)+')', end="\r")
+        print(f'Time Lapsed: {h}:{m}:{s}, Loops: {str(idx)}', end="\r")
         delay_choices = [8, 5, 10, 6, 11, 9, 3, 1, 2, 7]  # 延遲的秒數
         delay = random.choice(delay_choices)  # 隨機選取秒數
         time.sleep(delay)
