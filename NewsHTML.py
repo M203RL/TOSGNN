@@ -62,7 +62,7 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/
 
 ##test 場外測試
 test=False
-# test=True
+test=True
 
 ##result 發布文章
 result=False
