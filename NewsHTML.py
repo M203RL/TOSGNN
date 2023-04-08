@@ -1,3 +1,4 @@
+##GNN發布後執行
 import requests
 from bs4 import BeautifulSoup
 import urllib.request
@@ -35,15 +36,6 @@ def formatTime(time):
     else:
         return str(time)
 
-kt='\'\\x16\''
-def show(key):
-  
-    # print('\nYou Entered {0}'.format( key))
-    # print(format( key))
-    if format( key) == kt:
-        # Stop listener
-        return False
-
 tStart=time.time()
 t = time.localtime()
 
@@ -57,8 +49,16 @@ idx = 0
 FILEBROWSER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 target = '慶祝活動'
 cd = os.getcwd()
-user_agent_list = ["Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; WOW64) Gecko/20100101 Firefox/61.0","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36","Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)","Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10.5; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15"
-                   ]
+user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15', 
+                   'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36', 
+                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36', 
+                   'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36', 
+                   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36', 
+                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36', 
+                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36', 
+                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.68', 
+                   'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36', 
+                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36']
 
 ##test 場外測試
 test=False
@@ -80,7 +80,7 @@ reviewInput=False
 Alarm=False
 # Alarm=True
 
-testLink = 'https://gnn.gamer.com.tw/detail.php?sn=247559'
+testLink = 'https://towerofsaviors.com/2023/03/31/%e3%80%90%e6%8e%83%e8%95%a9%e9%99%b0%e9%9c%be%e7%9a%84%e9%bb%84%e6%98%8f%e4%b9%8b%e8%8a%92-%e2%80%a7-%e5%9f%8b%e8%91%ac%e5%8d%83%e5%b9%b4%e7%9a%84%e6%9c%a8%e4%b9%83%e4%bc%8a%e3%80%91%e6%85%b6%e7%a5%9d/'
 
 review=''
 # review='施工中...\n格式可能會亂掉'
@@ -95,18 +95,18 @@ while True:
     url = 'https://towerofsaviors.com/category/%e5%85%ac%e5%91%8a/'
     
     headers = {'User-Agent': random.choice(user_agent_list)}
-    response = requests.get(url=url, headers=headers)
+    response = requests.get(url=url, headers=headers, timeout=5)
     soup = BeautifulSoup(response.text, 'lxml')
     pArticle = soup.find_all('article')
     for i in range(10):
         h2 = pArticle[i].find('h2').text.strip()
         if target in h2:
             pA = pArticle[i].find('a')
-            tPost=pArticle[i].find('time').get('datetime')
+            tPost = pArticle[i].find('time').get('datetime')
             try:
-                timePost=tPost[tPost.index('T')+1:tPost.index('+')]
+                timePost = tPost[tPost.index('T')+1:tPost.index('+')]
             except IndexError:
-                timePost=tPost
+                timePost = tPost
             break
         
     if target in h2:
@@ -125,8 +125,6 @@ while True:
                 fi = open(latest, 'w')
                 data = { "gnn": "",  "announcement": ""}
                 json.dump(data, fi)
-                fi.write(id+'\n'+rec)
-                fi.close()
             with open(latest, 'r') as fi:
                 data = json.load(fi)
                 rec = data['announcement']
@@ -137,23 +135,24 @@ while True:
                 print("New Announcement Found")
                 Path(folder).mkdir(parents=True, exist_ok=True)
 
-                pThumbnail = pArticle.find_all('img')
-                img = []
-                uploaded_image = []
-                for item in tqdm(range(len(pThumbnail))):
-                    pPhoto = pThumbnail[item]['src']
-                    if not pPhoto in img:
-                        img.append(pPhoto)
-                        s = quote(pPhoto, safe=string.printable)
-                        urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
-                        PATH = f"{folder}\\cover{item}.jpg"
-                        im = pyimgur.Imgur(CLIENT_ID)
-                        uploaded_image = im.upload_image(PATH, title=id)
-                        if item == 0:
-                            tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
-                        else:
-                            tn = f'[div][img={uploaded_image.link} width=999][/div]'
-                        list.append(tn)
+                if not test:
+                    pThumbnail = pArticle.find_all('img')
+                    img = []
+                    uploaded_image = []
+                    for item in tqdm(range(len(pThumbnail))):
+                        pPhoto = pThumbnail[item]['src']
+                        if not pPhoto in img:
+                            img.append(pPhoto)
+                            s = quote(pPhoto, safe=string.printable)
+                            urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
+                            PATH = f"{folder}\\cover{item}.jpg"
+                            im = pyimgur.Imgur(CLIENT_ID)
+                            uploaded_image = im.upload_image(PATH, title=id)
+                            if item == 0:
+                                tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
+                            else:
+                                tn = f'[div][img={uploaded_image.link} width=999][/div]'
+                            list.append(tn)
                 
                 titleList = []
                 pContent = pArticle.find('figure', {"class": "wp-block-table"})
@@ -233,8 +232,8 @@ while True:
             h = formatTime(h)
             m = formatTime(m)
             s = formatTime(s)
-            print(f'Time Lapsed: {h}:{m}:{s}, Loops: {str(idx)}', end="\r")
-            delay_choices = [8, 5, 10, 6, 11, 9, 13, 15, 12, 7]  # 延遲的秒數
+            print(f'Time Lapsed: {h}:{m}:{s}, Loops: {idx}', end="\r")
+            delay_choices = [38, 25, 30, 36, 41, 39, 33, 35, 42, 37]  # 延遲的秒數
             delay = random.choice(delay_choices)  # 隨機選取秒數
             time.sleep(delay)
             idx += 1
