@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import quote
-from autoPost import post, initial
+
 import string
 import os
 import time
@@ -59,20 +59,24 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/
 
 ##test 場外測試
 test=False
-test=True
+# test=True
 
 ##result 發布文章
 result=False
 result=True
 
-testLink = 'https://gnn.gamer.com.tw/detail.php?sn=247559'
+textpaste = False
+# textpaste = True
+
+testLink = 'https://gnn.gamer.com.tw/detail.php?sn=108933'
 
 
-review=''
+review='白雪好白\n久違的雙周'
 print("心得: "+review)
     
-
-initial(test)
+if not textpaste:
+    from autoPost import post, initial
+    initial(test)
 
 while True:
     hour=int(time.strftime('%H',t))
@@ -142,7 +146,6 @@ while True:
                 rec = data['gnn']
                 fi.close()
             if test or id > rec:
-                
                 print("New GNN Found")
                 pTitle = newSoup.find("div", {"class": "BH-lbox GN-lbox3 gnn-detail-cont"})
                 title = pTitle.find('h1').text.strip()
@@ -308,10 +311,13 @@ while True:
                 print(str(dt) + 's')
                 if result:
                     article = text
-                    post(test, title, article)
-                    webbrowser.open(myLink,1)
+                    if not textpaste:
+                        post(test, title, article)
+                        webbrowser.open(myLink,1)
+                    else:
+                        pyperclip.copy(article)
 
-                if not test:
+                if int(id) > int(rec):
                     with open(latest, 'w') as fi:
                         data['gnn'] = id
                         json.dump(data, fi)
@@ -320,3 +326,5 @@ while True:
         time.sleep(0.5)
     except NameError:
         pass
+
+import NewsHTML
