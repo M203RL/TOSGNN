@@ -95,10 +95,14 @@ while True:
     url = 'https://towerofsaviors.com/category/%e5%85%ac%e5%91%8a/'
     
     headers = {'User-Agent': random.choice(user_agent_list)}
-    response = requests.get(url=url, headers=headers, timeout=5)
+    try:
+        response = requests.get(url=url, headers=headers, timeout=5, verify=False)
+    except requests.exceptions.ConnectionError:
+        time.sleep(5)
+        continue
     soup = BeautifulSoup(response.text, 'lxml')
     pArticle = soup.find_all('article')
-    for i in range(10):
+    for i in range(5):
         h2 = pArticle[i].find('h2').text.strip()
         if target in h2:
             pA = pArticle[i].find('a')
@@ -129,30 +133,31 @@ while True:
                 data = json.load(fi)
                 rec = data['announcement']
                 fi.close()
-            if test or int(id) > int(rec):
+            # if test or int(id) > int(rec):
+            if int(id) > int(rec):
                 ts = time.time()
                 list = []
                 print("New Announcement Found")
                 Path(folder).mkdir(parents=True, exist_ok=True)
 
-                if not test:
-                    pThumbnail = pArticle.find_all('img')
-                    img = []
-                    uploaded_image = []
-                    for item in tqdm(range(len(pThumbnail))):
-                        pPhoto = pThumbnail[item]['src']
-                        if not pPhoto in img:
-                            img.append(pPhoto)
-                            s = quote(pPhoto, safe=string.printable)
-                            urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
-                            PATH = f"{folder}\\cover{item}.jpg"
-                            im = pyimgur.Imgur(CLIENT_ID)
-                            uploaded_image = im.upload_image(PATH, title=id)
-                            if item == 0:
-                                tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
-                            else:
-                                tn = f'[div][img={uploaded_image.link} width=999][/div]'
-                            list.append(tn)
+            if not test:
+                pThumbnail = pArticle.find_all('img')
+                img = []
+                uploaded_image = []
+                for item in tqdm(range(len(pThumbnail))):
+                    pPhoto = pThumbnail[item]['src']
+                    if not pPhoto in img:
+                        img.append(pPhoto)
+                        s = quote(pPhoto, safe=string.printable)
+                        urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
+                        PATH = f"{folder}\\cover{item}.jpg"
+                        im = pyimgur.Imgur(CLIENT_ID)
+                        uploaded_image = im.upload_image(PATH, title=id)
+                        if item == 0:
+                            tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
+                        else:
+                            tn = f'[div][img={uploaded_image.link} width=999][/div]'
+                        list.append(tn)
                 
                 titleList = []
                 pContent = pArticle.find('figure', {"class": "wp-block-table"})
@@ -219,7 +224,7 @@ while True:
                     print('Total Time: '+str(dt)+'s')
                     post(test, title, article)
 
-                if not test:
+                if int(id) > int(rec):
                     with open(latest, 'w') as fi:
                         data['announcement'] = id
                         json.dump(data, fi)
