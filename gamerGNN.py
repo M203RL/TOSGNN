@@ -71,7 +71,7 @@ textpaste = False
 testLink = 'https://gnn.gamer.com.tw/detail.php?sn=108933'
 
 
-review='白雪好白\n久違的雙周'
+review=''
 print("心得: "+review)
     
 if not textpaste:
