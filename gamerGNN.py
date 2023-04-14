@@ -304,7 +304,6 @@ while True:
                 text += f'[div][/div]\n[div align=left][hr][url={myLink}]來源[/url][/div]\n[div align=left]標題整理:\n'
                 for h2 in h2List:
                     text += f'[color=#145292][b]● {h2}[/b][/color]\n'
-                text += f'[url=https://www.tosdownload.com/]下載連結[/url]{space}[/div][div align=left]{review}[/div]'
 
                 tf = time.time()
                 dt = round(tf - ts, 4)
