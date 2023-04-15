@@ -65,6 +65,10 @@ test=False
 result=False
 result=True
 
+##Timer 定時器
+Timer=False
+Timer=True
+
 textpaste = False
 # textpaste = True
 
@@ -82,7 +86,7 @@ while True:
     hour=int(time.strftime('%H',t))
     min=int(time.strftime('%M',t))
     sec=int(time.strftime('%S',t))
-    if not test:
+    if not test and Timer:
         while hour!=hs or min!=ms or sec<=ss:
             if hour>hs:
                 ds=(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
