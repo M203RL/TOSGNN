@@ -329,5 +329,6 @@ while True:
         time.sleep(0.5)
     except NameError:
         pass
-time.sleep(120)
-import NewsHTML
+if not test:
+    time.sleep(120)
+    import NewsHTML
