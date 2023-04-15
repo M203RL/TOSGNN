@@ -127,7 +127,7 @@ while True:
             latest = cd + '\\DL.json'
             if not Path(latest).is_file():
                 fi = open(latest, 'w')
-                data = { "gnn": "",  "announcement": ""}
+                data = { "gnn": "0",  "announcement": "0"}
                 json.dump(data, fi)
             with open(latest, 'r') as fi:
                 data = json.load(fi)
