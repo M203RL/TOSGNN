@@ -312,7 +312,7 @@ while True:
                 if result:
                     article = text
                     if not textpaste:
-                        post(test, False, title, article)
+                        myLink = post(test, False, title, article)
                         webbrowser.open(myLink,1)
                     else:
                         pyperclip.copy(article)
