@@ -9,9 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import webbrowser
 import pyperclip
 import time
+import re
+from datetime import datetime
 
 ##場外
-link1 = ''
+link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
 
 ##專版
 link2 = 'https://forum.gamer.com.tw/post1.php?bsn=23805&type=1'
@@ -63,7 +65,8 @@ def initial(test):
     text.clear()
 
 ##1.15s
-def post(test, title, article):
+def post(test, autoUpdate, title, article):
+    # ts = time.time()
     if not test:
         ##標題
         tt = driver.find_element("name", 'title')
@@ -91,8 +94,19 @@ def post(test, title, article):
         while get_url == link2:
             get_url = driver.current_url
             time.sleep(0.01)
+        driver.get('https://forum.gamer.com.tw/B.php?bsn=23805&subbsn=3')
+        posted = str(driver.find_element(By.CSS_SELECTOR, f'p[class="b-list__main__title"] p[innerText="【情報】{title}"]').get_attribute('href'))
+        webbrowser.open(f'https://forum.gamer.com.tw/{posted}',1)
+        if autoUpdate:
+            driver.get(f'https://forum.gamer.com.tw/{posted}')
+            id1 = str(driver.find_element(By.CSS_SELECTOR, 'div#BH-master>a:first-child').get_attribute('name'))
+            id2 = str(re.search(r'.*?bsn=23805&snA=(.*?)&tnum', posted).group(1))
+            driver.quit()
+            return f'https://forum.gamer.com.tw/post1.php?bsn=23805&sn={id1}&type=3&snA={id2}&page=1&subbsn=3'
+        driver.quit()
+        return f'https://forum.gamer.com.tw/{posted}'
+
     
-    webbrowser.open(get_url,1)
 
 if __name__ == '__main__':
     ts = time.time()
