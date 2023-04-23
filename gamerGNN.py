@@ -65,10 +65,6 @@ test=False
 result=False
 result=True
 
-##Timer 定時器
-Timer=False
-Timer=True
-
 textpaste = False
 # textpaste = True
 
@@ -86,7 +82,7 @@ while True:
     hour=int(time.strftime('%H',t))
     min=int(time.strftime('%M',t))
     sec=int(time.strftime('%S',t))
-    if not test and Timer:
+    if not test:
         while hour!=hs or min!=ms or sec<=ss:
             if hour>hs:
                 ds=(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
@@ -308,6 +304,7 @@ while True:
                 text += f'[div][/div]\n[div align=left][hr][url={myLink}]來源[/url][/div]\n[div align=left]標題整理:\n'
                 for h2 in h2List:
                     text += f'[color=#145292][b]● {h2}[/b][/color]\n'
+                text += f'[url=https://www.tosdownload.com/]下載連結[/url]{space}[/div][div align=left]{review}[/div]'
 
                 tf = time.time()
                 dt = round(tf - ts, 4)
@@ -315,7 +312,7 @@ while True:
                 if result:
                     article = text
                     if not textpaste:
-                        post(test, title, article)
+                        post(test, False, title, article)
                         webbrowser.open(myLink,1)
                     else:
                         pyperclip.copy(article)
@@ -329,6 +326,7 @@ while True:
         time.sleep(0.5)
     except NameError:
         pass
+
 if not test:
     time.sleep(120)
     import NewsHTML
