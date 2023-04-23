@@ -15,6 +15,7 @@ from tqdm import tqdm
 from autoPost import post, initial
 import json
 import re
+from NewsUpdate import update
 
 def txt(list):
     try:
@@ -35,9 +36,13 @@ def formatTime(time):
         return '0'+str(time)
     else:
         return str(time)
-
+    
+    
 tStart=time.time()
 t = time.localtime()
+year=str(time.strftime('%Y',t))
+month=str(time.strftime('%m',t))
+day=str(time.strftime('%d',t))
 
 result = time.strftime("%Y/%m/%d %H:%M:%S", t)
 print("Start Time: "+result)
@@ -62,7 +67,11 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/
 
 ##test 場外測試
 test=False
-# test=True
+test=True
+
+##autoUpdate 監視官網更新
+autoUpdate=False
+autoUpdate=True
 
 ##result 發布文章
 result=False
@@ -107,6 +116,11 @@ while True:
         if target in h2:
             pA = pArticle[i].find('a')
             tPost = pArticle[i].find('time').get('datetime')
+            tyear = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(1))
+            tmonth = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(2))
+            tday = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(3))
+            thour = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(4))
+            tminute = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(5))
             try:
                 timePost = tPost[tPost.index('T')+1:tPost.index('+')]
             except IndexError:
@@ -115,10 +129,13 @@ while True:
         
     if target in h2:
         try:
+            t = time.localtime()
+            year=str(time.strftime('%Y',t))
+            month=str(time.strftime('%m',t))
+            day=str(time.strftime('%d',t))
             myLink = pA.get('href')
             if LinkSet:
                 myLink = testLink
-
             newResponse = requests.get(url=myLink)
             newSoup = BeautifulSoup(newResponse.text, 'lxml')
             pArticle = newSoup.find('article')
@@ -133,8 +150,8 @@ while True:
                 data = json.load(fi)
                 rec = data['announcement']
                 fi.close()
-            # if test or int(id) > int(rec):
-            if int(id) > int(rec):
+            if test or (int(id) > int(rec) and (year == tyear and month == tmonth and day == tday)):
+            # if int(id) > int(rec):
                 ts = time.time()
                 list = []
                 print("New Announcement Found")
@@ -222,13 +239,13 @@ while True:
                     tf = time.time()
                     dt = round(tf - ts, 4)
                     print('Total Time: '+str(dt)+'s')
-                    post(test, title, article)
+                    newlink = post(test, autoUpdate, title, article)
 
-                if int(id) > int(rec):
-                    with open(latest, 'w') as fi:
-                        data['announcement'] = id
-                        json.dump(data, fi)
-                        fi.close()
+            if int(id) > int(rec):
+                with open(latest, 'w') as fi:
+                    data['announcement'] = id
+                    json.dump(data, fi)
+                    fi.close()
                 break
             tCurrent = time.time()
             tLapsed = round(tCurrent - tStart)
@@ -244,3 +261,7 @@ while True:
             idx += 1
         except NameError:
             pass
+
+if autoUpdate:
+    trecord = (tyear, tmonth, tday, thour, tminute)
+    update(trecord, myLink, h2)
