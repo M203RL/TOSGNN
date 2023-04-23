@@ -10,7 +10,6 @@ import webbrowser
 import pyperclip
 import time
 import re
-from datetime import datetime
 
 ##場外
 link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
@@ -90,6 +89,7 @@ def post(test, autoUpdate, title, article):
         while get_url == link1:
             get_url = driver.current_url
             time.sleep(0.01)
+        return link1
     if not test:
         while get_url == link2:
             get_url = driver.current_url
@@ -106,7 +106,52 @@ def post(test, autoUpdate, title, article):
         driver.quit()
         return f'https://forum.gamer.com.tw/{posted}'
 
+def upt(test, title, article, newlink):
+    if test:
+        ##場外
+        driver.get(link1)
+    else:
+        ##專版
+        driver.get(newlink)
+
+        select = Select(driver.find_element("name", 'nsubbsn'))
+        select.select_by_value('3')
+
+        select = Select(driver.find_element("name", 'subject'))
+        select.select_by_value('2')
+    time.sleep(0.1)
+    if test:
+        driver.find_element("id", 'editor').click()
+    else:
+        driver.find_element("id", 'postTips').click()
+
+
+    try:
+        WebDriverWait(driver, 0.5).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'editor-button fe_source') and not(contains(@class, 'editor-button fe_source is-active'))]"))).click()
+    except:
+        pass
+    text = driver.find_element("id", 'source')
+    text.clear()
+
+    if not test:
+        ##標題
+        tt = driver.find_element("name", 'title')
+        pyperclip.copy(title)
+        tt.send_keys(Keys.CONTROL, 'v')
+
+    ##內文
+    text = driver.find_element("id", 'source')
+    pyperclip.copy(article)
+    text.send_keys(Keys.CONTROL, 'v')
     
+    ##發文
+    target = driver.find_element(By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.post();"]')
+    target.click()
+    
+
+    target = driver.find_element(By.CSS_SELECTOR, 'button[class="btn btn-insert btn-primary"]')
+    target.click()
+    driver.quit()
 
 if __name__ == '__main__':
     ts = time.time()

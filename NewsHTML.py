@@ -85,9 +85,6 @@ LinkSet=False
 reviewInput=False
 # reviewInput=True
 
-##Alarm 發布確認
-Alarm=False
-# Alarm=True
 
 testLink = 'https://towerofsaviors.com/2023/03/31/%e3%80%90%e6%8e%83%e8%95%a9%e9%99%b0%e9%9c%be%e7%9a%84%e9%bb%84%e6%98%8f%e4%b9%8b%e8%8a%92-%e2%80%a7-%e5%9f%8b%e8%91%ac%e5%8d%83%e5%b9%b4%e7%9a%84%e6%9c%a8%e4%b9%83%e4%bc%8a%e3%80%91%e6%85%b6%e7%a5%9d/'
 
@@ -232,10 +229,6 @@ while True:
                 if result:
                     article = text
                     title = h2
-                    if Alarm:
-                        webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=0s',1)
-                        os.startfile(folder+"\\cover.jpg")
-                        input('Press Enter')
                     tf = time.time()
                     dt = round(tf - ts, 4)
                     print('Total Time: '+str(dt)+'s')
@@ -264,4 +257,4 @@ while True:
 
 if autoUpdate:
     trecord = (tyear, tmonth, tday, thour, tminute)
-    update(trecord, myLink, h2)
+    update(test, trecord, myLink, newlink, h2)

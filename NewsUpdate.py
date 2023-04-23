@@ -9,6 +9,7 @@ from tqdm import tqdm
 from urllib.parse import quote
 import string
 import pyimgur
+from autoPost import upt
 
 def formatTime(time):
     if time<10:
@@ -32,9 +33,8 @@ CLIENT_ID = "886c33830062f60"
 review=''
 print("心得:" + review)
 
-def update(trecord, myLink, h2):
+def update(test, trecord, myLink, newlink, h2):
     (tyear, tmonth, tday, thour, tminute) = trecord
-    tStart = time.time()
     idx = 0
     rUpdate = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
     while True:
@@ -120,7 +120,7 @@ def update(trecord, myLink, h2):
                     for i in range(len(list)):
                         text += list[i]
                     text += f'[hr][div][url={myLink}]來源[/url] [/div]'
-                    text += f'[div]更新時間: {timePost}[/div]'
+                    text += f'[div]更新時間: {rUpdate}[/div]'
                     text += f'[div]{review}[/div]'
                     text += '懶人包:\n'
                     for x in titleList:
@@ -128,19 +128,11 @@ def update(trecord, myLink, h2):
                             text += x + '\n'
                     article = text
                     title = h2
-                    newlink = post(test, autoUpdate, title, article)
+                    upt(test, title, article, newlink)
 
         except requests.exceptions.ConnectionError:
             time.sleep(5)
             continue
-        tCurrent = time.time()
-        tLapsed = round(tCurrent - tStart)
-        m, s = divmod(tLapsed, 60)
-        h, m = divmod(m, 60)
-        h = formatTime(h)
-        m = formatTime(m)
-        s = formatTime(s)
-        print(f'Time Lapsed: {h}:{m}:{s}, Loops: {idx}', end="\r")
         time.sleep(300)
         idx += 1
 
