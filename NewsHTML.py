@@ -93,7 +93,7 @@ if reviewInput:
     review=input("心得:")
 print("心得:" + review)
 
-initial(test)
+driver = initial(test)
 
 while True:
     
@@ -230,7 +230,7 @@ while True:
                     tf = time.time()
                     dt = round(tf - ts, 4)
                     print('Total Time: '+str(dt)+'s')
-                    newlink = post(test, autoUpdate, title, article)
+                    newlink = post(driver, test, autoUpdate, title, article)
 
                 break
             if year != tyear or month != tmonth or day != tday:

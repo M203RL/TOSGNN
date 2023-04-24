@@ -11,36 +11,33 @@ import pyperclip
 import time
 import re
 
-UserData = ''
+UserData = 'D:\\TOS\\User Data'
 
 ##場外
-link1 = ''
+link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
 
 ##專版
 link2 = 'https://forum.gamer.com.tw/post1.php?bsn=23805&type=1'
 
 
-
-options = webdriver.ChromeOptions()
-options.add_experimental_option("detach", True)
-options.add_argument("disable-infobars") 
-
-# path of the chrome's profile parent directory - change this path as per your system
-options.add_argument(f"user-data-dir={UserData}")
-
-options.add_argument("--profile-directory=Default")
-options.add_argument("--disable-popup-blocking")
-options.add_argument("--disable-extensions")
-options.add_argument("--disable-gpu")
-options.add_argument('--no-sandbox')
-options.add_argument('--blink-settings=imagesEnabled=false')
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options = options)
-options.add_experimental_option("excludeSwitches", ["enable-automation"])
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-options.add_experimental_option('useAutomationExtension', False)
-
-
 def initial(test):
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    options.add_argument("disable-infobars") 
+
+    # path of the chrome's profile parent directory - change this path as per your system
+    options.add_argument(f"user-data-dir={UserData}")
+
+    options.add_argument("--profile-directory=Default")
+    options.add_argument("--disable-popup-blocking")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-gpu")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--blink-settings=imagesEnabled=false')
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options = options)
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options.add_experimental_option('useAutomationExtension', False)
     if test:
         ##場外
         driver.get(link1)
@@ -66,9 +63,10 @@ def initial(test):
         pass
     text = driver.find_element("id", 'source')
     text.clear()
+    return driver
 
 ##1.15s
-def post(test, autoUpdate, title, article):
+def post(driver, test, autoUpdate, title, article):
     # ts = time.time()
     if not test:
         ##標題
@@ -94,7 +92,7 @@ def post(test, autoUpdate, title, article):
             get_url = driver.current_url
             time.sleep(0.01)
         driver.quit()
-        return link1
+        return get_url
     if not test:
         while get_url == link2:
             get_url = driver.current_url

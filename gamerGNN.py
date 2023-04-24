@@ -59,7 +59,7 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/
 
 ##test 場外測試
 test=False
-# test=True
+test=True
 
 ##result 發布文章
 result=False
@@ -68,7 +68,7 @@ result=True
 textpaste = False
 # textpaste = True
 
-testLink = 'https://gnn.gamer.com.tw/detail.php?sn=108933'
+testLink = 'https://gnn.gamer.com.tw/detail.php?sn=248539'
 
 
 review=''
@@ -76,7 +76,7 @@ print("心得: "+review)
     
 if not textpaste:
     from autoPost import post, initial
-    initial(test)
+    driver = initial(test)
 
 while True:
     hour=int(time.strftime('%H',t))
@@ -312,7 +312,7 @@ while True:
                 if result:
                     article = text
                     if not textpaste:
-                        myLink = post(test, False, title, article)
+                        myLink = post(driver, test, False, title, article)
                         webbrowser.open(myLink,1)
                     else:
                         pyperclip.copy(article)
@@ -327,6 +327,6 @@ while True:
     except NameError:
         pass
 
-if not test:
+if test:
     time.sleep(120)
     import NewsHTML
