@@ -7,7 +7,6 @@ from urllib.parse import quote
 import string
 import os
 import time
-import webbrowser
 import pyperclip
 import random
 import pyimgur
@@ -32,10 +31,10 @@ def txt(list):
         print('Text Copied')
 
 def formatTime(time):
-    if time<10:
-        return '0'+str(time)
+    if int(time)<10:
+        return '0'+str(int(time))
     else:
-        return str(time)
+        return str(int(time))
     
     
 tStart=time.time()
@@ -113,13 +112,13 @@ while True:
         if target in h2:
             pA = pArticle[i].find('a')
             tPost = pArticle[i].find('time').get('datetime')
-            tyear = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(1))
-            tmonth = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(2))
-            tday = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(3))
-            thour = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(4))
-            tminute = str(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.*?)', tPost).group(5))
+            tyear = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(1))
+            tmonth = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(2))
+            tday = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(3))
+            thour = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(4))
+            tminute = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(5))
             try:
-                timePost = tPost[tPost.index('T')+1:tPost.index('+')]
+                timePost = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
             except IndexError:
                 timePost = tPost
             break
@@ -153,6 +152,11 @@ while True:
                 list = []
                 print("New Announcement Found")
                 Path(folder).mkdir(parents=True, exist_ok=True)
+                if int(id) > int(rec):
+                    with open(latest, 'w') as fi:
+                        data['announcement'] = id
+                        json.dump(data, fi)
+                        fi.close()
 
                 if not test:
                     pThumbnail = pArticle.find_all('img')
@@ -176,12 +180,6 @@ while True:
                 titleList = []
                 pContent = pArticle.find('figure', {"class": "wp-block-table"})
                 pNews = pContent.find('tbody')
-                timeP = pContent.find_all('figcaption')
-                # txt(pNews)
-                # break
-                if len(timeP) > 0:
-                    text = timeP[0].text.strip()
-                    timePost = text[text.index('：')+1:]
                 td = pNews.find_all('td')
                 titles = pNews.find_all('mark')
                 for title in titles:
@@ -234,11 +232,8 @@ while True:
                     print('Total Time: '+str(dt)+'s')
                     newlink = post(test, autoUpdate, title, article)
 
-            if int(id) > int(rec):
-                with open(latest, 'w') as fi:
-                    data['announcement'] = id
-                    json.dump(data, fi)
-                    fi.close()
+                break
+            if year != tyear or month != tmonth or day != tday:
                 break
             tCurrent = time.time()
             tLapsed = round(tCurrent - tStart)
@@ -256,5 +251,6 @@ while True:
             pass
 
 if autoUpdate:
+    time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
     update(test, trecord, myLink, newlink, h2)
