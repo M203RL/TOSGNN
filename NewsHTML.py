@@ -253,4 +253,4 @@ while True:
 if autoUpdate:
     time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
-    update(test, trecord, myLink, newlink, h2)
+    update(test, trecord, myLink, newlink, h2, review)
