@@ -1,8 +1,18 @@
+import sys
+import subprocess
+import pkg_resources
+required = {'pyperclip', 'beautifulsoup4', 'requests', 'lxml', 'pyimgur', 'tqdm', 'selenium', 'webdriver-manager'}
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing = required - installed
+if missing:
+    python = sys.executable
+    subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
+
+
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import quote
-
 import string
 import os
 import time
