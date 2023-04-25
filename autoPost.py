@@ -153,15 +153,10 @@ def upt(test, title, article, newlink):
     text = driver.find_element("id", 'source')
     text.clear()
 
-    if not test:
-        ##標題
-        tt = driver.find_element("name", 'title')
-        pyperclip.copy(title)
-        tt.send_keys(Keys.CONTROL, 'v')
-
     ##內文
     text = driver.find_element("id", 'source')
     pyperclip.copy(article)
+    text.send_keys(Keys.CONTROL, 'a')
     text.send_keys(Keys.CONTROL, 'v')
     
     ##發文
