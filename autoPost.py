@@ -11,10 +11,10 @@ import pyperclip
 import time
 import re
 
-UserData = ''
+UserData = 'D:\\TOS\\User Data'
 
 ##場外
-link1 = ''
+link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
 
 ##專版
 link2 = 'https://forum.gamer.com.tw/post1.php?bsn=23805&type=1'
@@ -98,11 +98,11 @@ def post(driver, test, autoUpdate, title, article):
             get_url = driver.current_url
             time.sleep(0.01)
         driver.get('https://forum.gamer.com.tw/B.php?bsn=23805&subbsn=3')
-        posted = str(driver.find_element(By.CSS_SELECTOR, f'p[class="b-list__main__title"] p[innerText="【情報】{title}"]').get_attribute('href'))
+        posted = str(driver.find_element(By.XPATH,f'//p[text()="【情報】{title}"]').get_attribute('href'))
         webbrowser.open(f'https://forum.gamer.com.tw/{posted}',1)
         if autoUpdate:
             driver.get(f'https://forum.gamer.com.tw/{posted}')
-            id1 = str(driver.find_element(By.CSS_SELECTOR, 'div#BH-master>a:first-child').get_attribute('name'))
+            id1 = re.findall(r'\d+', str(driver.find_element(By.CSS_SELECTOR, 'section[class="c-section"]').get_attribute('id')))[0]
             id2 = str(re.search(r'.*?bsn=23805&snA=(.*?)&tnum', posted).group(1))
             driver.quit()
             return f'https://forum.gamer.com.tw/post1.php?bsn=23805&sn={id1}&type=3&snA={id2}&page=1&subbsn=3'
