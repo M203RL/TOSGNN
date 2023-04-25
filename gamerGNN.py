@@ -41,10 +41,10 @@ def txt(list):
         print('Text Copied')
 
 def formatTime(time):
-    if time<10:
-        return '0'+str(time)
+    if int(time)<10:
+        return '0'+str(int(time))
     else:
-        return str(time)
+        return str(int(time))
 
 t = time.localtime()
 year=int(time.strftime('%y',t))
@@ -78,10 +78,10 @@ result=True
 
 ##timer 倒數計時
 timer=False
-timer=True
+# timer=True
 
 textpaste = False
-# textpaste = True
+textpaste = True
 
 testLink = 'https://gnn.gamer.com.tw/detail.php?sn=248539'
 
