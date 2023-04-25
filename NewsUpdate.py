@@ -32,7 +32,7 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/
 CLIENT_ID = "886c33830062f60"
 
 
-def update(test, trecord, myLink, newlink, h2, review=''):
+def update(test, trecord, myLink, newlink, h2, review):
     (tyear, tmonth, tday, thour, tminute) = trecord
     rUpdate = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
     while True:
@@ -44,10 +44,8 @@ def update(test, trecord, myLink, newlink, h2, review=''):
             pArticle = Soup.find('article')
             id = re.findall(r'\d+', str(pArticle.get('id')))[0]
             folder = cd+'\\'+id
-            if len(pArticle.find_all('figcaption', {"class": "wp-element-caption"})) > 0:
-                t = pArticle.find('figcaption', {"class": "wp-element-caption"}).text.strip()
-                tUpdate = re.search(r'最後更新時間：(.*?)-(.*?)-(.*?) (.*?):([0-5][0-9])', t)
-                print(tUpdate)
+            if '最後更新時間' in str(pArticle):
+                tUpdate = re.search(r'最後更新時間：([0-9][0-9][0-9][0-9])-([0-1][0-9])-([0-3][0-9]) ([0-2][0-9]):([0-5][0-9])', str(pArticle))
                 uyear = formatTime(tUpdate.group(1))
                 umonth = formatTime(tUpdate.group(2))
                 uday = formatTime(tUpdate.group(3))
