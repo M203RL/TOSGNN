@@ -22,8 +22,9 @@ import webbrowser
 import re
 import json
 import numpy as np
+import datetime
 ##Time Set
-(hs,ms,ss)=(17,0,0)
+(dd, hs, ms, ss)=(3, 17, 0, 0)
 
 def txt(list):
     try:
@@ -75,6 +76,10 @@ test=True
 result=False
 result=True
 
+##timer 倒數計時
+timer=False
+timer=True
+
 textpaste = False
 # textpaste = True
 
@@ -92,19 +97,24 @@ while True:
     hour=int(time.strftime('%H',t))
     min=int(time.strftime('%M',t))
     sec=int(time.strftime('%S',t))
-    if not test:
-        while hour!=hs or min!=ms or sec<=ss:
-            if hour>hs:
-                ds=(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
-            else:
-                ds=(hs-hour)*60*60+(ms-min)*60+(ss-sec)
-            print(f' {animation[round(ix*0.25) % len(animation)]}T-{str(ds)}s         ',end='\r')
+    day = datetime.datetime.today().weekday()
+    if timer:
+        while day!=dd or hour!=hs or min!=ms or sec<=ss:
+            if day<dd:
+                ds = (dd-day-1)*24*60*60+(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
+            if day>dd:
+                ds = (dd-day+7-1)*24*60*60+(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
+            if day == dd:
+                ds = (hs-hour)*60*60+(ms-min)*60+(ss-sec)
+            result = datetime.timedelta(seconds = ds)
+            print(f' {animation[round(ix*0.25) % len(animation)]}T-{result}         ',end='\r')
             ix+=1
             time.sleep(0.001)
             t = time.localtime()
             hour=int(time.strftime('%H',t))
             min=int(time.strftime('%M',t))
             sec=int(time.strftime('%S',t))
+            day = datetime.datetime.today().weekday()
         time.sleep(1)
     ts = time.time()
     url='https://gnn.gamer.com.tw/index.php?k=4'
