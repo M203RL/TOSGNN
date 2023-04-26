@@ -104,7 +104,7 @@ def post(driver, test, autoUpdate, autoReply, title, article):
         id1 = re.findall(r'\d+', str(driver.find_element(By.CSS_SELECTOR, 'section[class="c-section"]').get_attribute('id')))[0]
         id2 = str(re.search(r'.*?bsn=23805&snA=(.*?)&tnum', posted).group(1))
         if autoReply:
-            driver.get(f'post1.php?bsn=23805&type=2&snA={id2}&subbsn=0')
+            driver.get(f'https://forum.gamer.com.tw/post1.php?bsn=23805&type=2&snA={id2}&subbsn=0')
             driver.find_element("id", 'postTips').click()
             text = driver.find_element("id", 'source')
             pyperclip.copy("卡")
