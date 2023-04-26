@@ -11,10 +11,10 @@ import pyperclip
 import time
 import re
 
-UserData = ''
+UserData = 'D:\\TOS\\User Data'
 
 ##場外
-link1 = ''
+link1 = 'https://forum.gamer.com.tw/post1.php?bsn=60076&sn=87519574&type=3&all=1'
 
 ##專版
 link2 = 'https://forum.gamer.com.tw/post1.php?bsn=23805&type=1'
@@ -66,7 +66,7 @@ def initial(test):
     return driver
 
 ##1.15s
-def post(driver, test, autoUpdate, title, article):
+def post(driver, test, autoUpdate, autoReply, title, article):
     # ts = time.time()
     if not test:
         ##標題
@@ -100,11 +100,25 @@ def post(driver, test, autoUpdate, title, article):
         driver.get('https://forum.gamer.com.tw/B.php?bsn=23805&subbsn=3')
         posted = str(driver.find_element(By.XPATH,f'//p[text()="【情報】{title}"]').get_attribute('href'))
         webbrowser.open(f'https://forum.gamer.com.tw/{posted}',1)
+        driver.get(f'https://forum.gamer.com.tw/{posted}')
+        id1 = re.findall(r'\d+', str(driver.find_element(By.CSS_SELECTOR, 'section[class="c-section"]').get_attribute('id')))[0]
+        id2 = str(re.search(r'.*?bsn=23805&snA=(.*?)&tnum', posted).group(1))
+        if autoReply:
+            driver.get(f'post1.php?bsn=23805&type=2&snA={id2}&subbsn=0')
+            driver.find_element("id", 'postTips').click()
+            text = driver.find_element("id", 'source')
+            pyperclip.copy("卡")
+            text.send_keys(Keys.CONTROL, 'v')
+            target = driver.find_element(By.CSS_SELECTOR, 'a[href="javascript:Forum.Post.post();"]')
+            target.click()
+            target = driver.find_element(By.CSS_SELECTOR, 'button[class="btn btn-insert btn-primary"]')
+            target.click()
+            get_url = driver.current_url
+            while get_url == link1:
+                get_url = driver.current_url
+                time.sleep(0.01)
+        driver.quit()
         if autoUpdate:
-            driver.get(f'https://forum.gamer.com.tw/{posted}')
-            id1 = re.findall(r'\d+', str(driver.find_element(By.CSS_SELECTOR, 'section[class="c-section"]').get_attribute('id')))[0]
-            id2 = str(re.search(r'.*?bsn=23805&snA=(.*?)&tnum', posted).group(1))
-            driver.quit()
             return f'https://forum.gamer.com.tw/post1.php?bsn=23805&sn={id1}&type=3&snA={id2}&page=1&subbsn=3'
         driver.quit()
         return f'https://forum.gamer.com.tw/{posted}'

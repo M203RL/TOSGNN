@@ -78,7 +78,11 @@ result=True
 
 ##LinkSet 指定連結
 LinkSet=False
-# LinkSet=True
+LinkSet=True
+
+##autoReply 發文後自動回覆文章
+autoReply=False
+# autoReply=True
 
 ##reviewInput 心得
 reviewInput=False
@@ -230,7 +234,7 @@ while True:
                     tf = time.time()
                     dt = round(tf - ts, 4)
                     print('Total Time: '+str(dt)+'s')
-                    newlink = post(driver, test, autoUpdate, title, article)
+                    newlink = post(driver, test, autoUpdate, autoReply, title, article)
 
                 break
             if year != tyear or month != tmonth or day != tday:
