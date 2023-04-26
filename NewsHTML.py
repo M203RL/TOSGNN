@@ -78,7 +78,7 @@ result=True
 
 ##LinkSet 指定連結
 LinkSet=False
-LinkSet=True
+# LinkSet=True
 
 ##autoReply 發文後自動回覆文章
 autoReply=False
@@ -161,7 +161,8 @@ while True:
                         data['announcement'] = id
                         json.dump(data, fi)
                         fi.close()
-
+                
+                imgList = []
                 if not test:
                     pThumbnail = pArticle.find_all('img')
                     img = []
@@ -180,6 +181,7 @@ while True:
                             else:
                                 tn = f'[div][img={uploaded_image.link} width=999][/div]'
                             list.append(tn)
+                            imgList.append(tn)
                 
                 titleList = []
                 pContent = pArticle.find('figure', {"class": "wp-block-table"})
@@ -257,4 +259,4 @@ while True:
 if autoUpdate:
     time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
-    update(test, trecord, myLink, newlink, h2, review)
+    update(test, trecord, myLink, newlink, h2, review, imgList)

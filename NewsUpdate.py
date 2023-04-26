@@ -32,7 +32,7 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/
 CLIENT_ID = "886c33830062f60"
 
 
-def update(test, trecord, myLink, newlink, h2, review):
+def update(test, trecord, myLink, newlink, h2, review, imgList):
     (tyear, tmonth, tday, thour, tminute) = trecord
     rUpdate = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
     while True:
@@ -58,24 +58,8 @@ def update(test, trecord, myLink, newlink, h2, review):
                     thour = uhour
                     tminute = uminute
                     rUpdate = f'{uyear}-{umonth}-{uday} {uhour}:{uminute}'
-                    if not test:
-                        pThumbnail = pArticle.find_all('img')
-                        img = []
-                        uploaded_image = []
-                        for item in tqdm(range(len(pThumbnail))):
-                            pPhoto = pThumbnail[item]['src']
-                            if not pPhoto in img:
-                                img.append(pPhoto)
-                                s = quote(pPhoto, safe=string.printable)
-                                urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
-                                PATH = f"{folder}\\cover{item}.jpg"
-                                im = pyimgur.Imgur(CLIENT_ID)
-                                uploaded_image = im.upload_image(PATH, title=id)
-                                if item == 0:
-                                    tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
-                                else:
-                                    tn = f'[div][img={uploaded_image.link} width=999][/div]'
-                                list.append(tn)
+                    for img in imgList:
+                        list.append(img)
                 
                     titleList = []
                     pContent = pArticle.find('figure', {"class": "wp-block-table"})
