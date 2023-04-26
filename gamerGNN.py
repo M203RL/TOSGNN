@@ -85,7 +85,7 @@ autoReply=False
 # autoReply=True
 
 textpaste = False
-textpaste = True
+# textpaste = True
 
 testLink = 'https://gnn.gamer.com.tw/detail.php?sn=248539'
 
