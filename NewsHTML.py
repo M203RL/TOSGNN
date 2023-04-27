@@ -239,7 +239,7 @@ while True:
                     newlink = post(driver, test, autoUpdate, autoReply, title, article)
 
                 break
-            if year != tyear or month != tmonth or day != tday:
+            if year != tyear or month != tmonth or day != tday and int(id) <= int(rec):
                 break
             tCurrent = time.time()
             tLapsed = round(tCurrent - tStart)
@@ -256,7 +256,7 @@ while True:
         except NameError:
             pass
 
-if autoUpdate:
+if autoUpdate and int(id) > int(rec):
     time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
     update(test, trecord, myLink, newlink, h2, review, imgList)
