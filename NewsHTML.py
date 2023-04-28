@@ -15,6 +15,7 @@ from autoPost import post, initial
 import json
 import re
 from NewsUpdate import update
+import pathlib
 
 def txt(list):
     try:
@@ -52,7 +53,7 @@ idx = 0
 
 FILEBROWSER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 target = '慶祝活動'
-cd = os.getcwd()
+cd = str(pathlib.Path(__file__).parent.resolve())
 user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15', 
                    'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36', 
                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36', 
@@ -70,7 +71,7 @@ test=True
 
 ##autoUpdate 監視官網更新
 autoUpdate=False
-autoUpdate=True
+# autoUpdate=True
 
 ##result 發布文章
 result=False
@@ -150,6 +151,7 @@ while True:
                 data = json.load(fi)
                 rec = data['announcement']
                 fi.close()
+            print(id, rec)
             if test or (int(id) > int(rec) and (year == tyear and month == tmonth and day == tday)):
             # if int(id) > int(rec):
                 ts = time.time()
@@ -256,7 +258,7 @@ while True:
         except NameError:
             pass
 
-if autoUpdate and int(id) > int(rec):
+if autoUpdate:
     time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
     update(test, trecord, myLink, newlink, h2, review, imgList)
