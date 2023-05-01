@@ -16,6 +16,9 @@ import json
 import re
 from NewsUpdate import update
 import pathlib
+from fake_useragent import UserAgent
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def txt(list):
     try:
@@ -49,21 +52,13 @@ print("Start Time: "+result)
 
 ##imgur
 CLIENT_ID = "886c33830062f60"
-idx = 0
+idx = 1
 
 FILEBROWSER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 target = '慶祝活動'
 cd = str(pathlib.Path(__file__).parent.resolve())
-user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15', 
-                   'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36', 
-                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36', 
-                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.68', 
-                   'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36']
+user_agent = UserAgent()
+
 
 ##test 場外測試
 test=False
@@ -100,165 +95,168 @@ print("心得:" + review)
 
 driver = initial(test)
 
+userList = []
 while True:
-    
     url = 'https://towerofsaviors.com/category/%e5%85%ac%e5%91%8a/'
-    
-    headers = {'User-Agent': random.choice(user_agent_list)}
     try:
-        response = requests.get(url=url, headers=headers, timeout=5, verify=False)
-    except requests.exceptions.ConnectionError:
-        time.sleep(5)
-        continue
-    soup = BeautifulSoup(response.text, 'lxml')
-    pArticle = soup.find_all('article')
-    for i in range(5):
-        h2 = pArticle[i].find('h2').text.strip()
-        if target in h2:
-            pA = pArticle[i].find('a')
-            tPost = pArticle[i].find('time').get('datetime')
-            tyear = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(1))
-            tmonth = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(2))
-            tday = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(3))
-            thour = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(4))
-            tminute = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(5))
-            try:
-                timePost = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
-            except IndexError:
-                timePost = tPost
-            break
         
-    if target in h2:
-        try:
-            t = time.localtime()
-            year=str(time.strftime('%Y',t))
-            month=str(time.strftime('%m',t))
-            day=str(time.strftime('%d',t))
-            myLink = pA.get('href')
-            if LinkSet:
-                myLink = testLink
-            newResponse = requests.get(url=myLink)
-            newSoup = BeautifulSoup(newResponse.text, 'lxml')
-            pArticle = newSoup.find('article')
-            id = re.findall(r'\d+', str(pArticle.get('id')))[0]
-            folder = cd+'\\'+id
-            latest = cd + '\\DL.json'
-            if not Path(latest).is_file():
-                fi = open(latest, 'w')
-                data = { "gnn": "0",  "announcement": "0"}
-                json.dump(data, fi)
-            with open(latest, 'r') as fi:
-                data = json.load(fi)
-                rec = data['announcement']
-                fi.close()
-            print(id, rec)
-            if test or (int(id) > int(rec) and (year == tyear and month == tmonth and day == tday)):
-            # if int(id) > int(rec):
-                ts = time.time()
-                list = []
-                print("New Announcement Found")
-                Path(folder).mkdir(parents=True, exist_ok=True)
-                if int(id) > int(rec):
-                    with open(latest, 'w') as fi:
-                        data['announcement'] = id
-                        json.dump(data, fi)
-                        fi.close()
-                
-                imgList = []
-                if not test:
-                    pThumbnail = pArticle.find_all('img')
-                    img = []
-                    uploaded_image = []
-                    for item in tqdm(range(len(pThumbnail))):
-                        pPhoto = pThumbnail[item]['src']
-                        if not pPhoto in img:
-                            img.append(pPhoto)
-                            s = quote(pPhoto, safe=string.printable)
-                            urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
-                            PATH = f"{folder}\\cover{item}.jpg"
-                            im = pyimgur.Imgur(CLIENT_ID)
-                            uploaded_image = im.upload_image(PATH, title=id)
-                            if item == 0:
-                                tn = f'[div][img={uploaded_image.link} thumbnail=yes width=999][/div]'
-                            else:
-                                tn = f'[div][img={uploaded_image.link} width=999][/div]'
-                            list.append(tn)
-                            imgList.append(tn)
-                
-                titleList = []
-                pContent = pArticle.find('figure', {"class": "wp-block-table"})
-                pNews = pContent.find('tbody')
-                td = pNews.find_all('td')
-                titles = pNews.find_all('mark')
-                for title in titles:
-                    text = title.text.strip()
-                    if text != '':
-                        titleList .append(f'[b][color=#790000]{text}[/color][/b]')
-
-                linkList = []
-                textList = []
-                link = pNews.find_all('a')
-                for links in link:
-                    ax = links['href']
-                    linkList.append(ax)
-                    textList.append(links.text.strip())
-                uIndex=0
-                for part in pNews:
-                    af = str(part)
-                    af = re.sub('<br/>', '\n', af)
-                    af = re.sub('<tr>', '[hr]', af)
-                    af = re.sub('</tr>', '', af)
-                    af = re.sub('<td>', '[div]', af)
-                    af = re.sub('</td>', '[/div]', af)
-                    af = re.sub('<mark.*?>', '[color=#790000]', af)
-                    af = re.sub('</mark>', '[/color]', af)
-                    af = re.sub('<strong.*?>', '[b]', af)
-                    af = re.sub('</strong>', '[/b]', af)
-                    af = re.sub('<s>', '[s]', af)
-                    af = re.sub('</s>', '[/s]', af)
-                    while '</a>' in af:
-                        alltext = re.search(r'<a .*?href=".*?".*?>.*?</a>', af).group()
-                        link = re.search(r'<a .*?href="(.*?)".*?>.*?</a>', af).group(1)
-                        text = re.search(r'<a .*?>(.*?)</a>', af).group(1)
-                        af = re.sub(alltext, f'[url={link}]{text}[/url]', af)
-                    list.append(af)
-                text = ''
-                for i in range(len(list)):
-                    text += list[i]
-                text += f'[hr][div][url={myLink}]來源[/url] [/div]'
-                text += f'[div]更新時間: {timePost}[/div]'
-                text += f'[div]{review}[/div]'
-                text += '懶人包:\n'
-                for x in titleList:
-                    if '★' in x:
-                        text += x + '\n'
-                if result:
-                    article = text
-                    title = h2
-                    tf = time.time()
-                    dt = round(tf - ts, 4)
-                    print('Total Time: '+str(dt)+'s')
-                    newlink = post(driver, test, autoUpdate, autoReply, title, article)
-
+        # response = requests.get(url=url, headers=headers, timeout=5, verify=False)
+        response = requests.get(url=url, headers={ 'user-agent': user_agent.random }, verify=False)
+    
+        soup = BeautifulSoup(response.text, 'lxml')
+        pArticle = soup.find_all('article')
+        for i in range(5):
+            h2 = pArticle[i].find('h2').text.strip()
+            if target in h2:
+                pA = pArticle[i].find('a')
+                tPost = pArticle[i].find('time').get('datetime')
+                tyear = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(1))
+                tmonth = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(2))
+                tday = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(3))
+                thour = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(4))
+                tminute = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(5))
+                try:
+                    timePost = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
+                except IndexError:
+                    timePost = tPost
                 break
-            if year != tyear or month != tmonth or day != tday and int(id) <= int(rec):
-                break
-            tCurrent = time.time()
-            tLapsed = round(tCurrent - tStart)
-            m, s = divmod(tLapsed, 60)
-            h, m = divmod(m, 60)
-            h = formatTime(h)
-            m = formatTime(m)
-            s = formatTime(s)
-            print(f'Time Lapsed: {h}:{m}:{s}, Loops: {idx}', end="\r")
-            delay_choices = [38, 25, 30, 36, 41, 39, 33, 35, 42, 37]  # 延遲的秒數
-            delay = random.choice(delay_choices)  # 隨機選取秒數
-            time.sleep(delay)
-            idx += 1
-        except NameError:
-            pass
+            
+        if target in h2:
+            try:
+                t = time.localtime()
+                year=str(time.strftime('%Y',t))
+                month=str(time.strftime('%m',t))
+                day=str(time.strftime('%d',t))
+                myLink = pA.get('href')
+                if LinkSet:
+                    myLink = testLink
+                newResponse = requests.get(url=myLink)
+                newSoup = BeautifulSoup(newResponse.text, 'lxml')
+                pArticle = newSoup.find('article')
+                id = re.findall(r'\d+', str(pArticle.get('id')))[0]
+                folder = cd+'\\'+id
+                latest = cd + '\\DL.json'
+                if not Path(latest).is_file():
+                    fi = open(latest, 'w')
+                    data = { "gnn": "0",  "announcement": "0"}
+                    json.dump(data, fi)
+                with open(latest, 'r') as fi:
+                    data = json.load(fi)
+                    rec = data['announcement']
+                    fi.close()
+                if test or (int(id) > int(rec) and (year == tyear and month == tmonth and day == tday)):
+                # if int(id) > int(rec):
+                    ts = time.time()
+                    list = []
+                    print("New Announcement Found")
+                    Path(folder).mkdir(parents=True, exist_ok=True)
+                    if int(id) > int(rec):
+                        with open(latest, 'w') as fi:
+                            data['announcement'] = id
+                            json.dump(data, fi)
+                            fi.close()
+                    
+                    imgList = []
+                    if not test:
+                        pThumbnail = pArticle.find_all('img')
+                        img = []
+                        uploaded_image = []
+                        for item in tqdm(range(len(pThumbnail))):
+                            pPhoto = pThumbnail[item]['src']
+                            if not pPhoto in img:
+                                img.append(pPhoto)
+                                s = quote(pPhoto, safe=string.printable)
+                                urllib.request.urlretrieve(s, f"{folder}\\cover{item}.jpg")
+                                PATH = f"{folder}\\cover{item}.jpg"
+                                im = pyimgur.Imgur(CLIENT_ID)
+                                uploaded_image = im.upload_image(PATH, title=id)
+                                if item == 0:
+                                    tn = f'[div][img={uploaded_image.link} thumbnail=yes width=100%][/div]'
+                                else:
+                                    tn = f'[div][img={uploaded_image.link} width=100%][/div]'
+                                list.append(tn)
+                                imgList.append(tn)
+                    
+                    titleList = []
+                    pContent = pArticle.find('figure', {"class": "wp-block-table"})
+                    pNews = pContent.find('tbody')
+                    td = pNews.find_all('td')
+                    titles = pNews.find_all('mark')
+                    for title in titles:
+                        text = title.text.strip()
+                        if text != '':
+                            titleList .append(f'[b][color=#790000]{text}[/color][/b]')
+
+                    linkList = []
+                    textList = []
+                    link = pNews.find_all('a')
+                    for links in link:
+                        ax = links['href']
+                        linkList.append(ax)
+                        textList.append(links.text.strip())
+                    uIndex=0
+                    for part in pNews:
+                        af = str(part)
+                        af = re.sub('<br/>', '\n', af)
+                        af = re.sub('<tr>', '[hr]', af)
+                        af = re.sub('</tr>', '', af)
+                        af = re.sub('<td>', '[div]', af)
+                        af = re.sub('</td>', '[/div]', af)
+                        af = re.sub('<mark.*?>', '[color=#790000]', af)
+                        af = re.sub('</mark>', '[/color]', af)
+                        af = re.sub('<strong.*?>', '[b]', af)
+                        af = re.sub('</strong>', '[/b]', af)
+                        af = re.sub('<s>', '[s]', af)
+                        af = re.sub('</s>', '[/s]', af)
+                        while '</a>' in af:
+                            alltext = re.search(r'<a .*?href=".*?".*?>.*?</a>', af).group()
+                            link = re.search(r'<a .*?href="(.*?)".*?>.*?</a>', af).group(1)
+                            text = re.search(r'<a .*?>(.*?)</a>', af).group(1)
+                            af = re.sub(alltext, f'[url={link}]{text}[/url]', af)
+                        list.append(af)
+                    text = ''
+                    for i in range(len(list)):
+                        text += list[i]
+                    text += f'[hr][div][url={myLink}]來源[/url][/div]\n'
+                    text += f'更新時間: {timePost}\n'
+                    text += f'[div]{review}[/div]\n'
+                    text += '懶人包:\n'
+                    for x in titleList:
+                        if '★' in x:
+                            text += x + '\n'
+                    if result:
+                        article = text
+                        title = h2
+                        tf = time.time()
+                        dt = round(tf - ts, 4)
+                        print('Total Time: '+str(dt)+'s')
+                        newlink = post(driver, test, autoUpdate, autoReply, title, article)
+
+                    break
+                # if year != tyear or month != tmonth or day != tday and int(id) <= int(rec):
+                #     break
+                tCurrent = time.time()
+                tLapsed = round(tCurrent - tStart)
+                m, s = divmod(tLapsed, 60)
+                h, m = divmod(m, 60)
+                h = formatTime(h)
+                m = formatTime(m)
+                s = formatTime(s)
+                avg = round(tLapsed/idx, 2)
+                print(f'Time Lapsed: {h}:{m}:{s}, Loops: {idx}, Average: {avg} s/loop', end="\r")
+                delay_choices = [8, 15, 10, 16, 11, 6, 13, 15, 12, 14]  # 延遲的秒數
+                delay = random.choice(delay_choices)  # 隨機選取秒數
+                time.sleep(delay)
+                idx += 1
+            except NameError:
+                pass
+    except requests.exceptions.ConnectionError:
+        time.sleep(15)
+        continue
+    except IndexError:
+        pass
 
 if autoUpdate:
     time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
-    update(test, trecord, myLink, newlink, h2, review, imgList)
+    update(test, trecord, myLink, newlink, title, article, review, imgList)

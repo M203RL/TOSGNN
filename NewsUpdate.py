@@ -1,49 +1,53 @@
 import time
-import os
 import requests
 from bs4 import BeautifulSoup
-import urllib.request
 import re
-import random
-from tqdm import tqdm
-from urllib.parse import quote
-import string
-import pyimgur
 from autoPost import upt
 import datetime
+import pathlib
+from fake_useragent import UserAgent
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import difflib
 
 def formatTime(time):
     if int(time)<10:
         return '0'+str(int(time))
     else:
         return str(int(time))
+    
+def compare(before, after, rUpdate):
+    result = ''
+    diff = difflib.unified_diff(
+    before, after, lineterm='', n=1000000)
 
-cd = os.getcwd()
-user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15', 
-                   'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36', 
-                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36', 
-                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36 Edg/89.0.774.68', 
-                   'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36', 
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36']
+    lines = list(diff)[2:]
+    for line in lines:
+        if line[0] != '@' and line[0] != '+' and line[0] != '-':
+            result += f"{line[1:]}"
+        if line[0] == '-' and line[1:5] != '更新時間':
+            result += f"[s]{line[1:]}[/s]"
+        if line[0] == '+' and line[1:5] != '更新時間':
+            result += f"[u]{line[1:]}[/u] (更新於: {rUpdate})"
+        if line[0] == '+' and line[1:5] == '更新時間':
+            result += f"{line[1:]}"
+        result += '\n'
+    return result
+
+cd = str(pathlib.Path(__file__).parent.resolve())
+user_agent = UserAgent()
 CLIENT_ID = "886c33830062f60"
 
 
-def update(test, trecord, myLink, newlink, h2, review, imgList):
+def update(test, trecord, myLink, newlink, title, article_before, review, imgList):
     (tyear, tmonth, tday, thour, tminute) = trecord
     rUpdate = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
     while True:
         list = []
-        headers = {'User-Agent': random.choice(user_agent_list)}
         try:
-            Response = requests.get(url=myLink, headers=headers, timeout=5, verify=False)
+            Response = requests.get(url=myLink, headers={ 'user-agent': user_agent.random }, timeout=5, verify=False)
             Soup = BeautifulSoup(Response.text, 'lxml')
             pArticle = Soup.find('article')
-            id = re.findall(r'\d+', str(pArticle.get('id')))[0]
-            folder = cd+'\\'+id
             if '最後更新時間' in str(pArticle):
                 tUpdate = re.search(r'最後更新時間：([0-9][0-9][0-9][0-9])-([0-1][0-9])-([0-3][0-9]) ([0-2][0-9]):([0-5][0-9])', str(pArticle))
                 uyear = formatTime(tUpdate.group(1))
@@ -110,8 +114,7 @@ def update(test, trecord, myLink, newlink, h2, review, imgList):
                     for x in titleList:
                         if '★' in x:
                             text += x + '\n'
-                    article = text
-                    title = h2
+                    article = compare(article_before, text, rUpdate)
                     
                     upt(test, title, article, newlink)
                     day = datetime.datetime.today().weekday()
@@ -119,7 +122,7 @@ def update(test, trecord, myLink, newlink, h2, review, imgList):
                         break
 
         except requests.exceptions.ConnectionError:
-            time.sleep(5)
+            time.sleep(15)
             continue
         time.sleep(300)
 
