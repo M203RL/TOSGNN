@@ -117,6 +117,7 @@ def update(test, trecord, myLink, newlink, title, article_before, review, imgLis
                     article = compare(article_before, text, rUpdate)
                     
                     upt(test, title, article, newlink)
+                    article_before = text
                     day = datetime.datetime.today().weekday()
                     if day == 2:
                         break
