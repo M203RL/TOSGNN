@@ -25,11 +25,11 @@ def compare(before, after, rUpdate):
     for line in lines:
         if line[0] != '@' and line[0] != '+' and line[0] != '-':
             result += f"{line[1:]}"
-        if line[0] == '-' and line[1:5] != '更新時間':
+        if line[0] == '-' and not f'更新時間: ' in line:
             result += f"[s]{line[1:]}[/s]"
-        if line[0] == '+' and line[1:5] != '更新時間':
+        if line[0] == '+' and not f'更新時間: ' in line:
             result += f"[u]{line[1:]}[/u] (更新於: {rUpdate})"
-        if line[0] == '+' and line[1:5] == '更新時間':
+        if line[0] == '+' and f'更新時間: ' in line:
             result += f"{line[1:]}"
         result += '\n'
     return result
@@ -107,7 +107,7 @@ def update(test, trecord, myLink, newlink, title, article_before, review, imgLis
                     text = ''
                     for i in range(len(list)):
                         text += list[i]
-                    text += f'[hr][div][url={myLink}]來源[/url] [/div]'
+                    text += f'[hr][div][url={myLink}]來源[/url][/div]'
                     text += f'[div]更新時間: {rUpdate}[/div]'
                     text += f'[div]{review}[/div]'
                     text += '懶人包:\n'

@@ -217,9 +217,9 @@ while True:
                     text = ''
                     for i in range(len(list)):
                         text += list[i]
-                    text += f'[hr][div][url={myLink}]來源[/url][/div]\n'
-                    text += f'更新時間: {timePost}\n'
-                    text += f'[div]{review}[/div]\n'
+                    text += f'[hr][div][url={myLink}]來源[/url][/div]'
+                    text += f'[div]更新時間: {timePost}[/div]'
+                    text += f'[div]{review}[/div]'
                     text += '懶人包:\n'
                     for x in titleList:
                         if '★' in x:
