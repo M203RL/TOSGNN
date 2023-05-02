@@ -234,7 +234,7 @@ while True:
                                     # pPhoto = item['data-src']
                                     s = quote(link, safe=string.printable)
                                     if not s in imgList:
-                                        tn = f'[div align=center width=100%][img={s} width=100%][/div]'
+                                        tn = f'[div align=center width=100%][img={s} width=999][/div]'
                                         allwords.append(tn)
                                         imgList.append(s)
                                     continue
