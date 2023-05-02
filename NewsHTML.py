@@ -173,7 +173,7 @@ while True:
                                 if item == 0:
                                     tn = f'[div][img={uploaded_image.link} thumbnail=yes width=100%][/div]'
                                 else:
-                                    tn = f'[div][img={uploaded_image.link} width=100%][/div]'
+                                    tn = f'[div][img={uploaded_image.link} width=999][/div]'
                                 list.append(tn)
                                 imgList.append(tn)
                     
