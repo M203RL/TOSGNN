@@ -9,6 +9,11 @@ from fake_useragent import UserAgent
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import difflib
+import pkg_resources
+from subprocess import call
+
+packages = [dist.project_name for dist in pkg_resources.working_set]
+call("pip install --upgrade " + ' '.join(packages), shell=True)
 
 def formatTime(time):
     if int(time)<10:
