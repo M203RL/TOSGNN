@@ -1,6 +1,11 @@
 import sys
 import subprocess
 import pkg_resources
+import pkg_resources
+from subprocess import call
+
+packages = [dist.project_name for dist in pkg_resources.working_set]
+call("pip install --upgrade " + ' '.join(packages), shell=True)
 required = {'pyperclip', 'beautifulsoup4', 'requests', 'lxml', 'pyimgur', 'tqdm', 'selenium', 'webdriver-manager', 'fake-useragent'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing = required - installed
