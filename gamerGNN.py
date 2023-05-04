@@ -140,7 +140,11 @@ while True:
                 h1 = pArticle.find('h1').text.strip()
                 break
                     
-        print(f' {animation[round(ix*1) % len(animation)]}Waiting...', end="\r")
+        t = time.localtime()
+        hour=int(time.strftime('%H',t))
+        min=int(time.strftime('%M',t))
+        sec=int(time.strftime('%S',t))
+        print(f' {animation[round(ix*1) % len(animation)]}Waiting... ({hour}:{min}:{sec})', end="\r")
         ix += 1
         
         try:
