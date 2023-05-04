@@ -205,9 +205,9 @@ while True:
                             continue
                         if '<col' in str(item)[0:5]:
                             continue
-                        if '<span' in str(item)[0:5]:
+                        if '<span' in str(item)[0:5] and not '　　' in str(item):
                             continue
-                        if '<p' in str(item)[0:5]:
+                        if '<p' in str(item)[0:5] and not '　　' in str(item):
                             continue
                         if item.text.strip() == '' and not 'img' in str(item):
                             continue
@@ -349,6 +349,6 @@ while True:
         time.sleep(15)
         continue
 
-if test:
-    time.sleep(120)
-    import NewsHTML
+# if not test:
+#     time.sleep(120)
+#     import NewsHTML
