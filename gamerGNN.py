@@ -346,7 +346,7 @@ while True:
         except NameError:
             pass
     except requests.exceptions.ConnectionError:
-        time.sleep(15)
+        time.sleep(1.5)
         continue
 
 # if not test:
