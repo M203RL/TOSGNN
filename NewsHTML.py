@@ -115,11 +115,11 @@ while True:
             if target in h2:
                 pA = pArticle[i].find('a')
                 tPost = pArticle[i].find('time').get('datetime')
-                tyear = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(1))
-                tmonth = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(2))
-                tday = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(3))
-                thour = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(4))
-                tminute = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?)', tPost).group(5))
+                tyear = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?):', tPost).group(1))
+                tmonth = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?):', tPost).group(2))
+                tday = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?):', tPost).group(3))
+                thour = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?):', tPost).group(4))
+                tminute = formatTime(re.search(r'(.*?)-(.*?)-(.*?)T(.*?):(.+?):', tPost).group(5))
                 try:
                     timePost = f'{tyear}-{tmonth}-{tday} {thour}:{tminute}'
                 except IndexError:
