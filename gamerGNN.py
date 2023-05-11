@@ -107,8 +107,8 @@ while True:
                 ds = (dd-day+7-1)*24*60*60+(hs-hour+24)*60*60+(ms-min)*60+(ss-sec)
             if day == dd:
                 ds = (hs-hour)*60*60+(ms-min)*60+(ss-sec)
-            result = datetime.timedelta(seconds = ds)
-            print(f' {animation[round(ix*0.25) % len(animation)]}T-{result}         ',end='\r')
+            resultTime = datetime.timedelta(seconds = ds)
+            print(f' {animation[round(ix*0.25) % len(animation)]}T-{resultTime}         ',end='\r')
             ix+=1
             time.sleep(0.001)
             t = time.localtime()
