@@ -50,7 +50,7 @@ def update(test, trecord, myLink, newlink, title, article_before, review, imgLis
     while True:
         list = []
         try:
-            Response = requests.get(url=myLink, headers={ 'user-agent': user_agent.random }, timeout=5, verify=False)
+            Response = requests.get(url=myLink, headers={ 'user-agent': user_agent.random }, verify=False)
             Soup = BeautifulSoup(Response.text, 'lxml')
             pArticle = Soup.find('article')
             if '最後更新時間' in str(pArticle):
