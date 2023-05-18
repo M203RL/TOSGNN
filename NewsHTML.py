@@ -103,7 +103,7 @@ driver = initial(test)
 userList = []
 while True:
     hour=int(time.strftime('%H',t))
-    if hour >= 0 and hour <11:
+    if hour >= 0 and hour <11 and not test:
         continue
     url = 'https://towerofsaviors.com/category/%e5%85%ac%e5%91%8a/'
     try:
