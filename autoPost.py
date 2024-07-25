@@ -11,7 +11,7 @@ import pyperclip
 import time
 import re
 
-UserData = ''
+UserData = r''
 
 ##場外
 link1 = ''

@@ -9,11 +9,12 @@ from fake_useragent import UserAgent
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import difflib
-import pkg_resources
 from subprocess import call
 
-packages = [dist.project_name for dist in pkg_resources.working_set]
-call("pip install --upgrade " + ' '.join(packages), shell=True)
+packages = ['pyperclip', 'beautifulsoup4', 'requests', 'lxml', 'pyimgur', 'tqdm', 'selenium', 'webdriver-manager', 'fake-useragent']
+def upgrade(package_list):
+    call(['pip', 'install', '--upgrade'] + package_list)
+upgrade(packages)
 
 def formatTime(time):
     if int(time)<10:

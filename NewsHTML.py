@@ -14,16 +14,17 @@ from tqdm import tqdm
 from autoPost import post, initial
 import json
 import re
-from NewsUpdate import update
+
 import pathlib
 from fake_useragent import UserAgent
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-import pkg_resources
 from subprocess import call
 
-packages = [dist.project_name for dist in pkg_resources.working_set]
-call("pip install --upgrade " + ' '.join(packages), shell=True)
+packages = ['pyperclip', 'beautifulsoup4', 'requests', 'lxml', 'pyimgur', 'tqdm', 'selenium', 'webdriver-manager', 'fake-useragent']
+def upgrade(package_list):
+    call(['pip', 'install', '--upgrade'] + package_list)
+upgrade(packages)
 
 def txt(list):
     try:
@@ -265,6 +266,7 @@ while True:
         pass
 
 if autoUpdate:
+    from NewsUpdate import update
     time.sleep(10)
     trecord = (tyear, tmonth, tday, thour, tminute)
     update(test, trecord, myLink, newlink, title, article, review, imgList)

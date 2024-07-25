@@ -1,17 +1,9 @@
-import sys
-import subprocess
-import pkg_resources
-import pkg_resources
 from subprocess import call
 
-packages = [dist.project_name for dist in pkg_resources.working_set]
-call("pip install --upgrade " + ' '.join(packages), shell=True)
-required = {'pyperclip', 'beautifulsoup4', 'requests', 'lxml', 'pyimgur', 'tqdm', 'selenium', 'webdriver-manager', 'fake-useragent'}
-installed = {pkg.key for pkg in pkg_resources.working_set}
-missing = required - installed
-if missing:
-    python = sys.executable
-    subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
+packages = ['pyperclip', 'beautifulsoup4', 'requests', 'lxml', 'pyimgur', 'tqdm', 'selenium', 'webdriver-manager', 'fake-useragent']
+def upgrade(package_list):
+    call(['pip', 'install', '--upgrade'] + package_list)
+upgrade(packages)
 
 
 import requests
@@ -29,6 +21,7 @@ import json
 import numpy as np
 import datetime
 from fake_useragent import UserAgent
+from autoPost import post, initial
 ##Time Set
 (dd, hs, ms, ss)=(3, 17, 0, 0)
 
@@ -75,7 +68,7 @@ result=True
 
 ##timer 倒數計時
 timer=False
-timer=True
+# timer=True
 
 ##autoReply 發文後自動回覆文章
 autoReply=False
@@ -91,7 +84,6 @@ review=''
 print("心得: "+review)
     
 if not textpaste:
-    from autoPost import post, initial
     driver = initial(test)
 
 while True:
